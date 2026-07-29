@@ -1,11 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
-interface LandingPageProps {
-  onGetStarted: () => void;
-}
+export const LandingPage: React.FC = () => {
+  const navigate = useNavigate();
 
-export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
   return (
     <div className="max-w-5xl mx-auto px-4 py-16 md:py-24 space-y-24">
       {/* Hero Section */}
@@ -20,7 +19,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
 
         <div className="pt-4">
           <button
-            onClick={onGetStarted}
+            onClick={() => navigate('/upload')}
             className="inline-flex items-center gap-3 bg-gradient-to-r from-[#117aca] to-[#004b87] hover:from-[#004b87] hover:to-[#117aca] text-white text-base md:text-lg font-bold px-10 py-5 rounded-2xl shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer select-none"
           >
             Get Started <ArrowRight className="w-5 h-5" />

@@ -1,19 +1,26 @@
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ShieldCheck, ArrowLeft, TrendingUp } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
-  onReset?: () => void;
-  showReset?: boolean;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children, onReset, showReset = false }) => {
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const isHome = location.pathname === '/';
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans">
       {/* Premium Header */}
       <header className="bg-[#0a2540] text-white shadow-md sticky top-0 z-50 border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer select-none" onClick={() => onReset?.()}>
+          <div
+            className="flex items-center gap-3 cursor-pointer select-none"
+            onClick={() => navigate('/')}
+          >
             {/* Custom Sleek Logo Emblem */}
             <div className="w-9 h-9 relative flex items-center justify-center bg-gradient-to-tr from-[#117aca] to-[#004b87] rounded-lg shadow-inner">
               <TrendingUp className="w-5 h-5 text-white" />
@@ -28,12 +35,12 @@ export const Layout: React.FC<LayoutProps> = ({ children, onReset, showReset = f
           </div>
 
           <nav className="flex items-center gap-4">
-            {showReset && onReset && (
+            {!isHome && (
               <button
-                onClick={onReset}
-                className="inline-flex items-center gap-1.5 bg-[#117aca] hover:bg-[#004b87] text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-sm cursor-pointer"
+                onClick={() => navigate('/upload')}
+                className="inline-flex items-center gap-1.5 bg-[#117aca] hover:bg-[#004b87] text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-sm cursor-pointer select-none"
               >
-                <ArrowLeft className="w-3.5 h-3.5" /> New Report
+                <ArrowLeft className="w-3.5 h-3.5" /> New Statement
               </button>
             )}
           </nav>

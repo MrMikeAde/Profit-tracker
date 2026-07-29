@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Layout } from './Layout';
 import { LandingPage } from './LandingPage';
 import { UploadPage } from './UploadPage';
 import { Dashboard } from './Dashboard';
 import { parseStatementFile, autoParseReport, type ReportData } from './parser';
 
-export default function App() {
-  const [viewState, setViewState] = useState<'landing' | 'upload' | 'dashboard'>('landing');
+function AppContent() {
   const [report, setReport] = useState<ReportData | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Automatically scroll to the top of the page when viewState changes
+  // Scroll to top automatically upon route changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' as any });
-  }, [viewState]);
+  }, [location.pathname]);
 
   // Handle statement file upload with 100% automated parsing
   const handleFileUpload = async (file: File) => {
@@ -22,7 +24,7 @@ export default function App() {
         // Run fully automated mapping and verification engine instantly!
         const finalReport = autoParseReport(file.name, rows);
         setReport(finalReport);
-        setViewState('dashboard');
+        navigate('/report'); // Navigate directly to /report page
       } else {
         alert('Empty statement file loaded. Please try another CSV, Excel, or PDF file.');
       }
@@ -32,27 +34,40 @@ export default function App() {
     }
   };
 
-  // Reset tracker state back to landing page
+  // Click 'New Statement' triggers reset and routes back to '/upload' instead of homepage
   const handleReset = () => {
     setReport(null);
-    setViewState('landing');
+    navigate('/upload');
   };
 
   return (
-    <Layout onReset={handleReset} showReset={viewState !== 'landing'}>
-      {viewState === 'landing' && (
-        <LandingPage onGetStarted={() => setViewState('upload')} />
-      )}
-
-      {viewState === 'upload' && (
-        <UploadPage onFileUpload={handleFileUpload} onBack={handleReset} />
-      )}
-
-      {viewState === 'dashboard' && report && (
-        <div className="space-y-4">
-          <Dashboard report={report} onReset={handleReset} />
-        </div>
-      )}
+    <Layout>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/upload" element={<UploadPage onFileUpload={handleFileUpload} />} />
+        <Route
+          path="/report"
+          element={
+            report ? (
+              <div className="space-y-4">
+                <Dashboard report={report} onReset={handleReset} />
+              </div>
+            ) : (
+              <Navigate to="/upload" replace />
+            )
+          }
+        />
+        {/* Wildcard Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </Layout>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   );
 }

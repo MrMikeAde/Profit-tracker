@@ -1,12 +1,13 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Upload, FileSpreadsheet, Lock, ArrowLeft } from 'lucide-react';
 
 interface UploadPageProps {
   onFileUpload: (file: File) => void;
-  onBack: () => void;
 }
 
-export const UploadPage: React.FC<UploadPageProps> = ({ onFileUpload, onBack }) => {
+export const UploadPage: React.FC<UploadPageProps> = ({ onFileUpload }) => {
+  const navigate = useNavigate();
   const [dragOver, setDragOver] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
 
@@ -47,7 +48,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({ onFileUpload, onBack }) 
       {/* Return to home button */}
       <div>
         <button
-          onClick={onBack}
+          onClick={() => navigate('/')}
           className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#0a2540] transition cursor-pointer select-none"
         >
           <ArrowLeft className="w-4 h-4" /> Back to home
