@@ -57,17 +57,9 @@ export const Layout: React.FC<LayoutProps> = ({ children, onReset, showReset = f
             </p>
           </div>
           <div className="mt-6 sm:mt-0 flex flex-wrap justify-center sm:justify-end gap-6 text-xs font-semibold">
-            <span className="flex items-center gap-1.5 text-emerald-400 bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-900/30">
+            <span className="flex items-center gap-1.5 text-emerald-400 bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-900/30 select-none">
               <ShieldCheck className="w-4 h-4" /> 100% Client-side privacy
             </span>
-            <a
-              href="https://whatiearn.netlify.app"
-              target="_blank"
-              rel="noreferrer"
-              className="text-blue-400 hover:text-blue-300 transition flex items-center"
-            >
-              Live Site
-            </a>
           </div>
         </div>
       </footer>

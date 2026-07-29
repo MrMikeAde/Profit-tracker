@@ -25,12 +25,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoadPreset, onFileUp
     setErrorMsg(null);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
-      const validTypes = ['.csv', '.xlsx', '.xls'];
+      const validTypes = ['.csv', '.xlsx', '.xls', '.pdf'];
       const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
       if (validTypes.includes(fileExtension)) {
         onFileUpload(file);
       } else {
-        setErrorMsg('Invalid file format. Please drop a valid CSV or Excel statement file.');
+        setErrorMsg('Invalid file format. Please drop a valid CSV, Excel, or PDF bank statement.');
       }
     }
   };
@@ -51,10 +51,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoadPreset, onFileUp
         </div>
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-[#0a2540] leading-tight max-w-4xl mx-auto">
           Years of Financial Statements.<br />
-          <span className="text-[#117aca]">One Beautiful Profit Tracker.</span>
+          <span className="text-[#117aca]">One Gorgeous Profit Tracker.</span>
         </h1>
         <p className="mt-6 text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
-          Add CSV or Excel bank statements from any of your financial institutions and instantly convert them into a beautiful, interactive private profit tracker page.
+          Add PDF, CSV, or Excel bank statements from any of your financial institutions and instantly convert them into a beautiful, interactive private profit tracker page.
         </p>
       </div>
 
@@ -67,7 +67,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoadPreset, onFileUp
               <Upload className="w-5 h-5 text-[#117aca]" /> Upload Your Statements
             </h3>
             <p className="text-sm text-gray-500 mb-6">
-              Drag & drop your CSV, XLSX, or XLS statement file below. All analysis is completed directly in your browser. Your financial data is secure, private, and never uploaded to any external server.
+              Drag & drop your CSV, XLSX, XLS, or PDF statement file below. All analysis is completed directly in your browser. Your financial data is secure, private, and never uploaded to any external server.
             </p>
 
             <div
@@ -85,14 +85,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoadPreset, onFileUp
                 id="file-upload-input"
                 type="file"
                 className="hidden"
-                accept=".csv, .xlsx, .xls"
+                accept=".csv, .xlsx, .xls, .pdf"
                 onChange={handleFileChange}
               />
               <FileSpreadsheet className="w-16 h-16 text-[#004b87] mb-4" />
               <p className="text-base font-semibold text-gray-700">
                 Drop your statement here or <span className="text-[#117aca] underline hover:text-[#004b87]">browse files</span>
               </p>
-              <p className="text-xs text-gray-400 mt-2">Supports standard export files (CSV, XLSX, XLS)</p>
+              <p className="text-xs text-gray-400 mt-2">Supports standard export files (PDF, CSV, XLSX, XLS)</p>
             </div>
 
             {errorMsg && (
@@ -121,7 +121,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoadPreset, onFileUp
             <div className="space-y-3.5">
               <button
                 onClick={() => onLoadPreset('naira')}
-                className="w-full text-left bg-white/10 hover:bg-white/20 active:bg-white/30 border border-white/20 hover:border-white/40 p-4 rounded-xl transition flex items-center justify-between pointer-events-auto cursor-pointer"
+                className="w-full text-left bg-white/10 hover:bg-white/20 active:bg-white/30 border border-white/20 hover:border-white/40 p-4 rounded-xl transition flex items-center justify-between pointer-events-auto cursor-pointer animate-none"
               >
                 <div>
                   <div className="font-bold text-sm text-white">Naira-based Demo Report</div>
@@ -154,9 +154,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoadPreset, onFileUp
             </div>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-white/10 text-xs text-blue-200 flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-[#ffb81c]" />
-            <span>Interactive multi-currency trackers available!</span>
+          <div className="mt-8 pt-6 border-t border-white/10 text-xs text-blue-200 flex items-start gap-2.5">
+            <CheckCircle className="w-4 h-4 text-[#ffb81c] shrink-0 mt-0.5" />
+            <span className="leading-normal font-medium">
+              Note: Clicking a preset will showcase a simulated demo dataset. To see your own transaction insights, drop your personal file.
+            </span>
           </div>
         </div>
       </div>

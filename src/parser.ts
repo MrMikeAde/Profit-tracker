@@ -76,7 +76,77 @@ export function guessCategory(description: string, amount: number): string {
   }
 }
 
+// Dynamic PDF.js loader and script injection
+function loadPdfJs(): Promise<any> {
+  return new Promise((resolve, reject) => {
+    if ((window as any).pdfjsLib) {
+      resolve((window as any).pdfjsLib);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js';
+    script.onload = () => {
+      const pdfjsLib = (window as any).pdfjsLib;
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+      resolve(pdfjsLib);
+    };
+    script.onerror = () => reject(new Error('Failed to load PDF.js engine from CDN.'));
+    document.head.appendChild(script);
+  });
+}
+
+// PDF Text Extraction & Tabular Row Reconstructor
+async function parsePdfFile(file: File): Promise<any[]> {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdfjsLib = await loadPdfJs();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const rows: any[][] = [];
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const textContent = await page.getTextContent();
+    const items = textContent.items as any[];
+
+    // Cluster items by their vertical position (y coordinate) to reconstruct table rows
+    const linesMap: { [y: number]: any[] } = {};
+    items.forEach((item) => {
+      const y = item.transform[5];
+      // Search for an existing y-coordinate within a 5-point vertical line threshold
+      const foundKey = Object.keys(linesMap)
+        .map(Number)
+        .find((k) => Math.abs(k - y) < 5);
+
+      if (foundKey !== undefined) {
+        linesMap[foundKey].push(item);
+      } else {
+        linesMap[y] = [item];
+      }
+    });
+
+    // Sort rows from top (highest y coordinate) to bottom
+    const sortedY = Object.keys(linesMap)
+      .map(Number)
+      .sort((a, b) => b - a);
+
+    sortedY.forEach((y) => {
+      // Sort columns horizontally from left to right (x coordinate is transform[4])
+      const lineItems = linesMap[y].sort((a, b) => a.transform[4] - b.transform[4]);
+      const lineTextParts = lineItems.map((item) => item.str.trim()).filter((str) => str.length > 0);
+
+      if (lineTextParts.length > 0) {
+        rows.push(lineTextParts);
+      }
+    });
+  }
+
+  return rows;
+}
+
 export function parseStatementFile(file: File): Promise<any[]> {
+  if (file.name.toLowerCase().endsWith('.pdf')) {
+    return parsePdfFile(file);
+  }
+
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -109,7 +179,7 @@ export function createReportFromRows(
 ): ReportData {
   const transactions: Transaction[] = [];
 
-  // Skip row 0 if it contains header texts
+  // Decide starting row: skip first row if it has headers
   const startRow = 1;
 
   for (let i = startRow; i < rows.length; i++) {

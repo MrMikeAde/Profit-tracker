@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Layout } from './Layout';
 import { LandingPage } from './LandingPage';
 import { ColumnMapper } from './ColumnMapper';
 import { Dashboard } from './Dashboard';
-import { Ledger } from './Ledger';
 import { parseStatementFile } from './parser';
 import type { ReportData } from './demoData';
 import { DEMO_NAIRA_REPORT, DEMO_USD_REPORT, DEMO_EUR_REPORT } from './demoData';
@@ -13,6 +12,11 @@ export default function App() {
   const [fileName, setFileName] = useState('');
   const [rawRows, setRawRows] = useState<any[][]>([]);
   const [report, setReport] = useState<ReportData | null>(null);
+
+  // Automatically scroll to the top of the page when viewState changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' as any });
+  }, [viewState]);
 
   // Load predefined demo presets
   const handleLoadPreset = (preset: 'naira' | 'usd' | 'eur') => {
@@ -26,7 +30,7 @@ export default function App() {
     setViewState('dashboard');
   };
 
-  // Handle spreadsheet file upload
+  // Handle spreadsheet or PDF file upload
   const handleFileUpload = async (file: File) => {
     try {
       setFileName(file.name);
@@ -35,11 +39,11 @@ export default function App() {
         setRawRows(rows);
         setViewState('mapper');
       } else {
-        alert('Empty statement file loaded. Please try another CSV/Excel file.');
+        alert('Empty statement file loaded. Please try another CSV, Excel, or PDF file.');
       }
     } catch (err) {
       console.error(err);
-      alert('Error parsing statement file. Make sure it is a valid CSV or Excel document.');
+      alert('Error parsing statement file. Make sure it is a valid CSV, Excel, or PDF document.');
     }
   };
 
@@ -75,7 +79,6 @@ export default function App() {
       {viewState === 'dashboard' && report && (
         <div className="space-y-4">
           <Dashboard report={report} onReset={handleReset} />
-          <Ledger report={report} />
         </div>
       )}
     </Layout>
