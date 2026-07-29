@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { Calendar, TrendingUp, TrendingDown, CalendarDays, BarChart3, Globe, Download, Zap, Sparkles, AlertTriangle } from 'lucide-react';
+import { Calendar, TrendingUp, TrendingDown, CalendarDays, BarChart3, Globe, Download, Sparkles, AlertTriangle } from 'lucide-react';
 import type { ReportData } from './parser';
 
 interface DashboardProps {
@@ -270,13 +270,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
 
   // ADVANCED FINANCIAL INTELLIGENCE CALCULATIONS
   const advancedAnalytics = useMemo(() => {
-    // A. Savings Rate
     const savingsRate = metrics.totalInflow > 0 ? (metrics.netFlow / metrics.totalInflow) * 100 : 0;
     let savingsGrade = 'Deficit Spend';
     let savingsColor = 'text-red-500 bg-red-50 border-red-200';
     if (metrics.netFlow >= 0) {
       if (savingsRate >= 50) {
-        savingsGrade = 'Elite Savings Rate';
+        savingsGrade = 'Elite Savings';
         savingsColor = 'text-emerald-700 bg-emerald-50 border-emerald-200';
       } else if (savingsRate >= 30) {
         savingsGrade = 'Healthy / High Efficiency';
@@ -285,12 +284,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         savingsGrade = 'Moderate Savings';
         savingsColor = 'text-blue-700 bg-blue-50 border-blue-200';
       } else {
-        savingsGrade = 'Low Capital Efficiency';
+        savingsGrade = 'Low Efficiency';
         savingsColor = 'text-amber-700 bg-amber-50 border-amber-200';
       }
     }
 
-    // B. Month-Over-Month growth trend of net cash flows
     const monthlyNetMap: { [key: string]: number } = {};
     report.transactions.forEach(tx => {
       const key = tx.date.substring(0, 7);
@@ -309,7 +307,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
       }
     }
 
-    // C. Capital Runway / Compounded Future Wealth
     const monthlyInflowMap: { [key: string]: number } = {};
     report.transactions.forEach(tx => {
       if (tx.amount >= 0) {
@@ -327,12 +324,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
       ? Math.max(0, metrics.netFlow / -netBurnRate)
       : null;
 
-    // Compound calculation (Wealth projection over 5 years assuming conservative 7% annual return)
     const compoundFutureWealth = metrics.netFlow > 0
       ? metrics.netFlow * Math.pow(1 + 0.07, 5)
       : 0;
 
-    // D. Smart Recurring Charges Predictor Engine (low variance description match)
     const groups: { [key: string]: { amounts: number[]; dates: string[] } } = {};
     report.transactions.forEach(tx => {
       if (tx.amount < 0) {
@@ -388,31 +383,31 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 print:p-0">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 print:p-0 min-w-0 overflow-hidden">
       {/* Header section with print trigger */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-200 pb-5 print:hidden">
-        <div>
-          <div className="flex items-center gap-2 text-sm font-semibold text-[#117aca] uppercase tracking-wider">
-            <Globe className="w-4 h-4" /> Client-Side Certified Safe Report
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 text-sm font-semibold text-[#117aca] uppercase tracking-wider select-none">
+            <Globe className="w-4 h-4 shrink-0" /> Client-Side Certified Safe Report
           </div>
-          <h2 className="text-2xl font-black text-[#0a2540] mt-1">{report.title}</h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Period: {new Date(report.startDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })} — {new Date(report.endDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })} · {metrics.totalTransactions} transactions
+          <h2 className="text-2xl font-black text-[#0a2540] mt-1 truncate">{report.title}</h2>
+          <p className="text-sm text-gray-500 mt-1 truncate">
+            Period: {new Date(report.startDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })} — {new Date(report.endDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })} &middot; {metrics.totalTransactions} transactions
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 shrink-0">
           <button
             onClick={handlePrint}
-            className="inline-flex items-center gap-1.5 bg-white border border-gray-300 hover:border-gray-400 text-gray-700 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition hover:shadow cursor-pointer"
+            className="inline-flex items-center gap-1.5 bg-white border border-gray-300 hover:border-gray-400 text-gray-700 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition hover:shadow cursor-pointer select-none"
           >
-            <Download className="w-4 h-4" /> Download PDF/Print
+            <Download className="w-4 h-4 shrink-0" /> Download PDF
           </button>
           <button
             onClick={onReset}
-            className="inline-flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold transition cursor-pointer select-none"
           >
-            Upload New File
+            New Statement
           </button>
         </div>
       </div>
@@ -421,196 +416,186 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
       <div className="hidden print:block mb-8">
         <h1 className="text-3xl font-black text-[#0a2540]">{report.title}</h1>
         <p className="text-sm text-gray-500">
-          Statement Period: {report.startDate} to {report.endDate} · Generated with WhatIEarn Profit Tracker
+          Statement Period: {report.startDate} to {report.endDate} &middot; Generated with WhatIEarn Profit Tracker
         </p>
       </div>
 
       {/* Top Level Numeric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex items-center justify-between transition hover:shadow-md">
-          <div>
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Inflow</span>
-            <h3 className="text-2xl font-black text-emerald-600 mt-1">{formatValue(metrics.totalInflow)}</h3>
-            <span className="text-xs text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded font-semibold inline-block mt-2">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex items-center justify-between transition hover:shadow-md min-w-0">
+          <div className="min-w-0">
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block truncate">Total Inflow</span>
+            <h3 className="text-2xl font-black text-emerald-600 mt-1 truncate">{formatValue(metrics.totalInflow)}</h3>
+            <span className="text-xs text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded font-semibold inline-block mt-2 truncate">
               {metrics.numInflow} credits
             </span>
           </div>
-          <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
+          <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 shrink-0 ml-3">
             <TrendingUp className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex items-center justify-between transition hover:shadow-md">
-          <div>
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Outflow</span>
-            <h3 className="text-2xl font-black text-red-600 mt-1">{formatValue(metrics.totalOutflow)}</h3>
-            <span className="text-xs text-red-500 bg-red-50 px-2 py-0.5 rounded font-semibold inline-block mt-2">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex items-center justify-between transition hover:shadow-md min-w-0">
+          <div className="min-w-0">
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block truncate">Total Outflow</span>
+            <h3 className="text-2xl font-black text-red-600 mt-1 truncate">{formatValue(metrics.totalOutflow)}</h3>
+            <span className="text-xs text-red-500 bg-red-50 px-2 py-0.5 rounded font-semibold inline-block mt-2 truncate">
               {metrics.numOutflow} debits
             </span>
           </div>
-          <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-red-600">
+          <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-red-600 shrink-0 ml-3">
             <TrendingDown className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex items-center justify-between transition hover:shadow-md">
-          <div>
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Net Flow</span>
-            <h3 className={`text-2xl font-black mt-1 ${metrics.netFlow >= 0 ? 'text-[#117aca]' : 'text-red-700'}`}>
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex items-center justify-between transition hover:shadow-md min-w-0">
+          <div className="min-w-0">
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block truncate">Net Flow</span>
+            <h3 className={`text-2xl font-black mt-1 truncate ${metrics.netFlow >= 0 ? 'text-[#117aca]' : 'text-red-700'}`}>
               {formatValue(metrics.netFlow)}
             </h3>
-            <span className={`text-xs px-2 py-0.5 rounded font-semibold inline-block mt-2 ${metrics.netFlow >= 0 ? 'text-[#117aca] bg-blue-50' : 'text-red-700 bg-red-50'}`}>
-              {metrics.netFlow >= 0 ? 'Positive Net Flow' : 'Deficit'}
+            <span className={`text-xs px-2 py-0.5 rounded font-semibold inline-block mt-2 truncate ${metrics.netFlow >= 0 ? 'text-[#117aca] bg-blue-50' : 'text-red-700 bg-red-50'}`}>
+              {metrics.netFlow >= 0 ? 'Positive Net' : 'Deficit'}
             </span>
           </div>
-          <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-[#117aca]">
+          <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-[#117aca] shrink-0 ml-3">
             <Calendar className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex items-center justify-between transition hover:shadow-md">
-          <div>
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Closing Balance</span>
-            <h3 className="text-2xl font-black text-[#0a2540] mt-1">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex items-center justify-between transition hover:shadow-md min-w-0">
+          <div className="min-w-0">
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block truncate">Closing Balance</span>
+            <h3 className="text-2xl font-black text-[#0a2540] mt-1 truncate">
               {formatValue(metrics.netFlow)}
             </h3>
-            <span className="text-xs text-[#0a2540] bg-[#ffb81c]/10 px-2 py-0.5 rounded font-semibold inline-block mt-2">
+            <span className="text-xs text-[#0a2540] bg-[#ffb81c]/10 px-2 py-0.5 rounded font-semibold inline-block mt-2 truncate">
               {metrics.yearsDifference} years in view
             </span>
           </div>
-          <div className="w-12 h-12 bg-[#ffb81c]/10 rounded-lg flex items-center justify-center text-amber-600">
+          <div className="w-12 h-12 bg-[#ffb81c]/10 rounded-lg flex items-center justify-center text-amber-600 shrink-0 ml-3">
             <BarChart3 className="w-6 h-6" />
           </div>
         </div>
       </div>
 
-      {/* NEW: WHATIEARN FINANCIAL INTELLIGENCE SUITE */}
-      <div className="bg-gradient-to-tr from-slate-900 to-[#0a2540] text-white rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-800">
-        <div className="flex items-center gap-2 mb-6">
-          <Zap className="w-5 h-5 text-[#ffb81c] animate-bounce" />
+      {/* THREE INTEGRATED CAPITAL INTELLIGENCE CARDS (Removed master outer wrapper and header, placed inline in main grid) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Card 1: Capital Efficiency */}
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col justify-between text-white min-w-0 shadow-lg">
           <div>
-            <h3 className="text-lg font-bold">WhatIEarn Capital Intelligence Insights</h3>
-            <p className="text-xs text-blue-200">Autonomous pattern extraction & efficiency forecasting</p>
+            <div className="flex items-center justify-between mb-3 gap-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-blue-300 block truncate">Capital Efficiency</span>
+              <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border shrink-0 truncate ${advancedAnalytics.savingsColor}`}>
+                {advancedAnalytics.savingsGrade}
+              </span>
+            </div>
+            <h4 className="text-3xl font-black mb-1 truncate">{advancedAnalytics.savingsRate.toFixed(1)}%</h4>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              The ratio of net capital retained relative to total incoming cash flow during the period. Higher represents elevated asset security.
+            </p>
+          </div>
+          <div className="mt-6 w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-1000 ${
+                advancedAnalytics.savingsRate >= 30 ? 'bg-emerald-500' : 'bg-amber-400'
+              }`}
+              style={{ width: `${Math.max(0, Math.min(100, advancedAnalytics.savingsRate))}%` }}
+            />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Savings Rate Efficiency Indicator */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-5 flex flex-col justify-between">
+        {/* Card 2: Runway / Growth Trend */}
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col justify-between text-white min-w-0 shadow-lg">
+          {metrics.netFlow >= 0 ? (
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-300">Capital Efficiency</span>
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${advancedAnalytics.savingsColor}`}>
-                  {advancedAnalytics.savingsGrade}
-                </span>
-              </div>
-              <h4 className="text-3xl font-black mb-1">{advancedAnalytics.savingsRate.toFixed(1)}%</h4>
+              <span className="text-xs font-bold uppercase tracking-wider text-blue-300 block mb-3 truncate">Wealth Forecast</span>
+              <h4 className="text-2xl font-black text-emerald-400 mb-1 truncate">{formatValue(advancedAnalytics.compoundFutureWealth)}</h4>
               <p className="text-xs text-slate-300 leading-relaxed">
-                The ratio of net capital retained relative to total incoming cash flow during the period. Higher represents elevated asset security.
+                Projected compounding value of current net earnings in **5 years** at a conservative **7% annual yield** without extra deposits.
+              </p>
+              <div className="mt-4 flex items-center gap-1.5 text-[10px] text-[#ffb81c] font-semibold bg-[#ffb81c]/10 border border-[#ffb81c]/20 px-2.5 py-1 rounded">
+                <Sparkles className="w-3 h-3 shrink-0" />
+                <span className="truncate">Sustained growth compounds capital.</span>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-red-300 flex items-center gap-1.5 mb-3">
+                <AlertTriangle className="w-3.5 h-3.5 text-[#ffb81c] shrink-0" /> Cash Runway Alert
+              </span>
+              <h4 className="text-2xl font-black text-red-400 mb-1 truncate">
+                {advancedAnalytics.currentRunwayMonths !== null
+                  ? `${advancedAnalytics.currentRunwayMonths.toFixed(1)} Months`
+                  : 'Deficit Risk'}
+              </h4>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Calculated based on current burn rate ({formatValue(advancedAnalytics.netBurnRate)}/mo). Action is recommended to reduce recurring outlays.
               </p>
             </div>
-            <div className="mt-5 w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-1000 ${
-                  advancedAnalytics.savingsRate >= 30 ? 'bg-emerald-500' : 'bg-amber-400'
-                }`}
-                style={{ width: `${Math.max(0, Math.min(100, advancedAnalytics.savingsRate))}%` }}
-              />
-            </div>
-          </div>
+          )}
 
-          {/* Runway or Compounding Projections */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-5 flex flex-col justify-between">
-            {metrics.netFlow >= 0 ? (
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-300 block mb-3">Wealth Compounder Forecast</span>
-                <h4 className="text-2xl font-black text-emerald-400 mb-1">{formatValue(advancedAnalytics.compoundFutureWealth)}</h4>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Projected compounding value of current net earnings in **5 years** at a conservative **7% annual yield** without extra deposits.
-                </p>
-                <div className="mt-4 flex items-center gap-1 text-[10px] text-[#ffb81c] font-semibold bg-[#ffb81c]/10 border border-[#ffb81c]/20 px-2.5 py-1 rounded">
-                  <Sparkles className="w-3 h-3 shrink-0" />
-                  <span>Sustained growth compounds capital security.</span>
-                </div>
-              </div>
-            ) : (
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-red-300 flex items-center gap-1.5 mb-3">
-                  <AlertTriangle className="w-3.5 h-3.5 text-[#ffb81c]" /> Cash Runway Alert
+          <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-blue-200 font-bold">
+            <span className="truncate">MoM Trend:</span>
+            <span className="flex items-center gap-1 truncate font-black">
+              {advancedAnalytics.momTrend === 'up' && (
+                <span className="text-emerald-400 flex items-center gap-0.5">
+                  <TrendingUp className="w-3.5 h-3.5 shrink-0" /> +{advancedAnalytics.momGrowth.toFixed(1)}%
                 </span>
-                <h4 className="text-2xl font-black text-red-400 mb-1">
-                  {advancedAnalytics.currentRunwayMonths !== null
-                    ? `${advancedAnalytics.currentRunwayMonths.toFixed(1)} Months`
-                    : 'Deficit Risk'}
-                </h4>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Calculated based on current burn rate ({formatValue(advancedAnalytics.netBurnRate)}/mo). Action is recommended to reduce recurring outlays.
-                </p>
+              )}
+              {advancedAnalytics.momTrend === 'down' && (
+                <span className="text-red-400 flex items-center gap-0.5">
+                  <TrendingDown className="w-3.5 h-3.5 shrink-0" /> {advancedAnalytics.momGrowth.toFixed(1)}%
+                </span>
+              )}
+              {advancedAnalytics.momTrend === 'flat' && <span className="text-gray-400">Stable</span>}
+            </span>
+          </div>
+        </div>
+
+        {/* Card 3: Subscription Predictor */}
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col justify-between text-white min-w-0 shadow-lg">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-blue-300 block mb-3 truncate">Recurring Charges</span>
+            {advancedAnalytics.recurringList.length === 0 ? (
+              <p className="text-xs text-slate-400 py-6 text-center">No regular monthly outlays detected.</p>
+            ) : (
+              <div className="space-y-2.5 max-h-[140px] overflow-y-auto pr-1">
+                {advancedAnalytics.recurringList.map((rec, idx) => (
+                  <div key={idx} className="flex items-center justify-between text-xs gap-3">
+                    <div className="truncate min-w-0">
+                      <div className="font-bold text-slate-100 truncate">{rec.name}</div>
+                      <div className="text-[10px] text-slate-400">{rec.count} intervals</div>
+                    </div>
+                    <span className="font-bold text-red-300 bg-red-950/40 border border-red-900/30 px-1.5 py-0.5 rounded text-[10px] shrink-0">
+                      ~{formatValue(rec.avgAmount)}/mo
+                    </span>
+                  </div>
+                ))}
               </div>
             )}
-
-            <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-blue-200 font-bold">
-              <span>MoM Trend Status:</span>
-              <span className="flex items-center gap-1">
-                {advancedAnalytics.momTrend === 'up' && (
-                  <span className="text-emerald-400 flex items-center gap-0.5">
-                    <TrendingUp className="w-3.5 h-3.5" /> +{advancedAnalytics.momGrowth.toFixed(1)}% Upward
-                  </span>
-                )}
-                {advancedAnalytics.momTrend === 'down' && (
-                  <span className="text-red-400 flex items-center gap-0.5">
-                    <TrendingDown className="w-3.5 h-3.5" /> {advancedAnalytics.momGrowth.toFixed(1)}% Contraction
-                  </span>
-                )}
-                {advancedAnalytics.momTrend === 'flat' && <span className="text-gray-400">Stable / Linear</span>}
-              </span>
-            </div>
-          </div>
-
-          {/* Smart Subscription Detector */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-5 flex flex-col justify-between">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-blue-300 block mb-3">Predicted Recurring Subscriptions</span>
-              {advancedAnalytics.recurringList.length === 0 ? (
-                <p className="text-xs text-slate-400 py-4 text-center">No regular monthly outlays detected.</p>
-              ) : (
-                <div className="space-y-2.5 max-h-[140px] overflow-y-auto pr-1">
-                  {advancedAnalytics.recurringList.map((rec, idx) => (
-                    <div key={idx} className="flex items-center justify-between text-xs">
-                      <div className="truncate pr-2">
-                        <div className="font-bold text-slate-100 truncate max-w-[150px]">{rec.name}</div>
-                        <div className="text-[10px] text-slate-400">{rec.count} monthly intervals</div>
-                      </div>
-                      <span className="font-bold text-red-300 bg-red-950/40 border border-red-900/30 px-1.5 py-0.5 rounded text-[10px]">
-                        ~{formatValue(rec.avgAmount)}/mo
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </div>
 
       {/* Spending Rhythm Heatmap */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 min-w-0 overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-4 mb-5">
-          <div className="flex items-center gap-2">
-            <CalendarDays className="w-5 h-5 text-[#004b87]" />
-            <div>
-              <h3 className="text-base font-bold text-[#0a2540]">Spending Rhythm Heatmap</h3>
-              <p className="text-xs text-gray-500">Visualization of transaction frequency across daily grid</p>
+          <div className="flex items-center gap-2 min-w-0">
+            <CalendarDays className="w-5 h-5 text-[#004b87] shrink-0" />
+            <div className="min-w-0">
+              <h3 className="text-base font-bold text-[#0a2540] truncate">Spending Rhythm Heatmap</h3>
+              <p className="text-xs text-gray-500 truncate">Visualization of transaction frequency across daily grid</p>
             </div>
           </div>
 
           {/* Year filtering buttons */}
-          <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap shrink-0">
             {yearsList.map((y) => (
               <button
                 key={y}
                 onClick={() => setSelectedYearHeatmap(y)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer select-none ${
                   selectedYearHeatmap === y
                     ? 'bg-[#117aca] text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -623,7 +608,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         </div>
 
         {/* Calendar Map Rendering */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto pb-2">
           <div className="min-w-[700px] flex gap-2">
             {/* Days list label */}
             <div className="flex flex-col justify-around text-[10px] text-gray-400 font-semibold pr-2 pt-6">
@@ -651,7 +636,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
                 ))}
               </div>
 
-              <div className="flex items-center justify-end gap-1.5 mt-3 text-[10px] text-gray-400 font-semibold">
+              <div className="flex items-center justify-end gap-1.5 mt-3 text-[10px] text-gray-400 font-semibold select-none">
                 <span>Less</span>
                 <div className="w-3 h-3 rounded-sm bg-gray-100" />
                 <div className="w-3 h-3 rounded-sm bg-blue-100" />
@@ -668,7 +653,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
       {/* Main Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Balance Area Chart */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 min-w-0">
           <div className="border-b border-gray-100 pb-4 mb-5">
             <h3 className="text-base font-bold text-[#0a2540]">Running Balance Progress</h3>
             <p className="text-xs text-gray-500">Cumulative capital movement trend over time</p>
@@ -701,18 +686,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         </div>
 
         {/* Monthly Flow Bar Chart */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 min-w-0">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-4 mb-5">
-            <div>
-              <h3 className="text-base font-bold text-[#0a2540]">Monthly Cash Movement</h3>
-              <p className="text-xs text-gray-500">Direct comparison of inbound vs outbound</p>
+            <div className="min-w-0">
+              <h3 className="text-base font-bold text-[#0a2540] truncate">Monthly Cash Movement</h3>
+              <p className="text-xs text-gray-500 truncate">Direct comparison of inbound vs outbound</p>
             </div>
 
             {/* Selection */}
-            <div className="flex items-center gap-1.5 flex-wrap">
+            <div className="flex items-center gap-1.5 flex-wrap shrink-0">
               <button
                 onClick={() => setSelectedYearCharts('All')}
-                className={`px-2.5 py-1 rounded text-xs font-bold transition cursor-pointer ${
+                className={`px-2.5 py-1 rounded text-xs font-bold transition cursor-pointer select-none ${
                   selectedYearCharts === 'All' ? 'bg-[#004b87] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
@@ -722,7 +707,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
                 <button
                   key={y}
                   onClick={() => setSelectedYearCharts(y)}
-                  className={`px-2.5 py-1 rounded text-xs font-bold transition cursor-pointer ${
+                  className={`px-2.5 py-1 rounded text-xs font-bold transition cursor-pointer select-none ${
                     selectedYearCharts === y ? 'bg-[#004b87] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
@@ -758,7 +743,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
       {/* Categories Breakdown Panels */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Outflow / Expense Category list */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 min-w-0">
           <div className="border-b border-gray-100 pb-4 mb-4">
             <h3 className="text-base font-bold text-[#0a2540]">Where the money went</h3>
             <p className="text-xs text-gray-500">Outflow distribution categorized by volume</p>
@@ -768,12 +753,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
               <p className="text-sm text-gray-400 text-center py-6">No outflows found.</p>
             ) : (
               categorizedExpenses.map((exp, idx) => (
-                <div key={idx} className="space-y-1.5">
-                  <div className="flex justify-between text-xs font-semibold text-gray-700">
-                    <span className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-red-500" /> {exp.category}
+                <div key={idx} className="space-y-1.5 min-w-0">
+                  <div className="flex justify-between text-xs font-semibold text-gray-700 gap-2">
+                    <span className="flex items-center gap-2 truncate min-w-0">
+                      <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" /> <span className="truncate">{exp.category}</span>
                     </span>
-                    <span className="font-bold">{formatValue(exp.amount)} ({exp.percent.toFixed(1)}%)</span>
+                    <span className="font-bold shrink-0">{formatValue(exp.amount)} ({exp.percent.toFixed(1)}%)</span>
                   </div>
                   <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
                     <div className="bg-red-500 h-full rounded-full" style={{ width: `${exp.percent}%` }} />
@@ -785,7 +770,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         </div>
 
         {/* Inflow / Income Category list */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 min-w-0">
           <div className="border-b border-gray-100 pb-4 mb-4">
             <h3 className="text-base font-bold text-[#0a2540]">Where the money came from</h3>
             <p className="text-xs text-gray-500">Inflow distribution categorized by volume</p>
@@ -795,12 +780,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
               <p className="text-sm text-gray-400 text-center py-6">No inflows found.</p>
             ) : (
               categorizedIncomes.map((inc, idx) => (
-                <div key={idx} className="space-y-1.5">
-                  <div className="flex justify-between text-xs font-semibold text-gray-700">
-                    <span className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500" /> {inc.category}
+                <div key={idx} className="space-y-1.5 min-w-0">
+                  <div className="flex justify-between text-xs font-semibold text-gray-700 gap-2">
+                    <span className="flex items-center gap-2 truncate min-w-0">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" /> <span className="truncate">{inc.category}</span>
                     </span>
-                    <span className="font-bold">{formatValue(inc.amount)} ({inc.percent.toFixed(1)}%)</span>
+                    <span className="font-bold shrink-0">{formatValue(inc.amount)} ({inc.percent.toFixed(1)}%)</span>
                   </div>
                   <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
                     <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${inc.percent}%` }} />
@@ -815,7 +800,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
       {/* Top Counterparties / Payees and Payers list */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Top Payees (Debits) */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 min-w-0">
           <div className="border-b border-gray-100 pb-4 mb-4">
             <h3 className="text-base font-bold text-[#0a2540]">Top Payees</h3>
             <p className="text-xs text-gray-500">Largest cumulative outgoing cash destinations</p>
@@ -825,17 +810,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
               <p className="text-sm text-gray-400 text-center py-6">No counterparties recorded.</p>
             ) : (
               topPayees.map((payee, idx) => (
-                <div key={idx} className="py-3 flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded bg-[#004b87]/5 text-[#004b87] flex items-center justify-center font-bold text-[10px]">
+                <div key={idx} className="py-3 flex items-center justify-between text-xs gap-3 min-w-0">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="w-6 h-6 rounded bg-[#004b87]/5 text-[#004b87] flex items-center justify-center font-bold text-[10px] shrink-0">
                       {String(idx + 1).padStart(2, '0')}
                     </span>
-                    <div>
-                      <div className="font-bold text-gray-800">{payee.name}</div>
+                    <div className="min-w-0 truncate">
+                      <div className="font-bold text-gray-800 truncate">{payee.name}</div>
                       <div className="text-gray-400 mt-0.5">{payee.count} transactions</div>
                     </div>
                   </div>
-                  <div className="font-bold text-red-600">{formatValue(payee.amount)}</div>
+                  <div className="font-bold text-red-600 shrink-0">{formatValue(payee.amount)}</div>
                 </div>
               ))
             )}
@@ -843,7 +828,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         </div>
 
         {/* Top Payers (Credits) */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 min-w-0">
           <div className="border-b border-gray-100 pb-4 mb-4">
             <h3 className="text-base font-bold text-[#0a2540]">Top Payers</h3>
             <p className="text-xs text-gray-500">Largest cumulative incoming cash sources</p>
@@ -853,17 +838,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
               <p className="text-sm text-gray-400 text-center py-6">No sources recorded.</p>
             ) : (
               topPayers.map((payer, idx) => (
-                <div key={idx} className="py-3 flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-[10px]">
+                <div key={idx} className="py-3 flex items-center justify-between text-xs gap-3 min-w-0">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="w-6 h-6 rounded bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-[10px] shrink-0">
                       {String(idx + 1).padStart(2, '0')}
                     </span>
-                    <div>
-                      <div className="font-bold text-gray-800">{payer.name}</div>
+                    <div className="min-w-0 truncate">
+                      <div className="font-bold text-gray-800 truncate">{payer.name}</div>
                       <div className="text-gray-400 mt-0.5">{payer.count} transactions</div>
                     </div>
                   </div>
-                  <div className="font-bold text-emerald-600">{formatValue(payer.amount)}</div>
+                  <div className="font-bold text-emerald-600 shrink-0">{formatValue(payer.amount)}</div>
                 </div>
               ))
             )}
@@ -872,22 +857,22 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
       </div>
 
       {/* Analytics KPI Extra Panel */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 text-center">
-          <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Largest Credit</div>
-          <div className="text-lg font-black text-emerald-600 mt-1.5">{formatValue(largestCredit)}</div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 text-center min-w-0">
+          <div className="text-xs font-bold text-gray-400 uppercase tracking-widest truncate">Largest Credit</div>
+          <div className="text-lg font-black text-emerald-600 mt-1.5 truncate">{formatValue(largestCredit)}</div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 text-center">
-          <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Largest Debit</div>
-          <div className="text-lg font-black text-red-600 mt-1.5">{formatValue(largestDebit)}</div>
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 text-center min-w-0">
+          <div className="text-xs font-bold text-gray-400 uppercase tracking-widest truncate">Largest Debit</div>
+          <div className="text-lg font-black text-red-600 mt-1.5 truncate">{formatValue(largestDebit)}</div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 text-center">
-          <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Avg Monthly Debit</div>
-          <div className="text-lg font-black text-gray-700 mt-1.5">{formatValue(averageMonthlyDebit)}</div>
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 text-center min-w-0">
+          <div className="text-xs font-bold text-gray-400 uppercase tracking-widest truncate">Avg Monthly Debit</div>
+          <div className="text-lg font-black text-gray-700 mt-1.5 truncate">{formatValue(averageMonthlyDebit)}</div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 text-center">
-          <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Avg Transaction</div>
-          <div className="text-lg font-black text-gray-700 mt-1.5">{formatValue(metrics.avgInflow)}</div>
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 text-center min-w-0">
+          <div className="text-xs font-bold text-gray-400 uppercase tracking-widest truncate">Avg Transaction</div>
+          <div className="text-lg font-black text-gray-700 mt-1.5 truncate">{formatValue(metrics.avgInflow)}</div>
         </div>
       </div>
     </div>

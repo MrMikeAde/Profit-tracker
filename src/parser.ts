@@ -191,52 +191,124 @@ export function parseStatementFile(file: File): Promise<any[]> {
   });
 }
 
-// Function to map parsed rows to exact Transactions based on user column selection
-export function createReportFromRows(
-  fileName: string,
-  rows: any[][],
-  mapping: { dateIdx: number; descIdx: number; amtIdx: number; categoryIdx: number | null },
-  currencySymbol: string = '₦',
-  currencyCode: string = 'NGN'
-): ReportData {
-  const transactions: Transaction[] = [];
+// 100% AUTOMATIC STATEMENT COMPILER ENGINE (No manual mapping UI required)
+export function autoParseReport(fileName: string, rawRows: any[][]): ReportData {
+  let headerIdx = -1;
+  let dateIdx = -1;
+  let descIdx = -1;
+  let amtIdx = -1;
+  let debitIdx = -1;
+  let creditIdx = -1;
 
-  // Decide starting row: skip first row if it has headers
-  const startRow = 1;
-
-  for (let i = startRow; i < rows.length; i++) {
-    const row = rows[i];
+  // Scan the first 25 rows to identify the actual bank statement table header row
+  for (let r = 0; r < Math.min(25, rawRows.length); r++) {
+    const row = rawRows[r];
     if (!row || row.length === 0) continue;
 
-    const rawDate = row[mapping.dateIdx];
-    const rawDesc = row[mapping.descIdx];
-    const rawAmt = row[mapping.amtIdx];
+    let hasDate = false;
+    let hasDesc = false;
+    let hasAmt = false;
+    let hasDebit = false;
+    let hasCredit = false;
 
-    if (rawDate === undefined || rawAmt === undefined) continue;
+    row.forEach((cell) => {
+      const val = String(cell || '').toLowerCase().trim();
+      if (val.includes('date') || val.includes('time') || val.includes('timestamp')) {
+        hasDate = true;
+      }
+      if (val.includes('desc') || val.includes('narrat') || val.includes('particular') || val.includes('payee') || val.includes('remark') || val.includes('detail')) {
+        hasDesc = true;
+      }
+      if (val.includes('amount') || val.includes('value') || val.includes('sum') || val.includes('amt')) {
+        hasAmt = true;
+      }
+      if (val.includes('debit') || val.includes('withdraw') || val.includes('outflow') || val.includes('paid out')) {
+        hasDebit = true;
+      }
+      if (val.includes('credit') || val.includes('deposit') || val.includes('inflow') || val.includes('paid in')) {
+        hasCredit = true;
+      }
+    });
 
-    // Format fields
+    // We found our header row if it contains Date and at least one other major indicator
+    if (hasDate && (hasDesc || hasAmt || (hasDebit && hasCredit))) {
+      headerIdx = r;
+      row.forEach((cell, cIdx) => {
+        const val = String(cell || '').toLowerCase().trim();
+        if (val.includes('date') || val.includes('time') || val.includes('timestamp')) {
+          if (dateIdx === -1) dateIdx = cIdx;
+        } else if (val.includes('desc') || val.includes('narrat') || val.includes('particular') || val.includes('payee') || val.includes('remark') || val.includes('detail')) {
+          if (descIdx === -1) descIdx = cIdx;
+        } else if (val.includes('amount') || val.includes('value') || val.includes('sum') || val.includes('amt')) {
+          if (amtIdx === -1) amtIdx = cIdx;
+        } else if (val.includes('debit') || val.includes('withdraw') || val.includes('outflow') || val.includes('paid out')) {
+          if (debitIdx === -1) debitIdx = cIdx;
+        } else if (val.includes('credit') || val.includes('deposit') || val.includes('inflow') || val.includes('paid in')) {
+          if (creditIdx === -1) creditIdx = cIdx;
+        }
+      });
+      break;
+    }
+  }
+
+  // Fallbacks if no header row was confidently matched
+  if (headerIdx === -1) {
+    headerIdx = 0;
+    dateIdx = 0;
+    descIdx = 1;
+    amtIdx = 2;
+  }
+
+  const transactions: Transaction[] = [];
+  const startRow = headerIdx + 1;
+
+  for (let i = startRow; i < rawRows.length; i++) {
+    const row = rawRows[i];
+    if (!row || row.length === 0) continue;
+
+    const rawDate = row[dateIdx];
+    const rawDesc = row[descIdx];
+
+    if (rawDate === undefined) continue;
+
     const date = parseExcelDate(rawDate);
-    const description = rawDesc !== undefined ? String(rawDesc).trim() : 'Unlabelled Transaction';
+    const description = rawDesc !== undefined ? String(rawDesc).trim() : 'Transaction Detail';
 
-    // Parse numeric value
+    // Parse single amount column or reconcile credit/debit combinations
     let amount = 0;
-    if (typeof rawAmt === 'number') {
-      amount = rawAmt;
-    } else if (typeof rawAmt === 'string') {
-      amount = parseFloat(rawAmt.replace(/[^\d.-]/g, ''));
+    if (amtIdx !== -1 && row[amtIdx] !== undefined) {
+      const rawAmt = row[amtIdx];
+      if (typeof rawAmt === 'number') {
+        amount = rawAmt;
+      } else if (typeof rawAmt === 'string') {
+        amount = parseFloat(rawAmt.replace(/[^\d.-]/g, ''));
+      }
+    } else {
+      // Reconcile multi-column credit/debit structure
+      let debit = 0;
+      let credit = 0;
+      if (debitIdx !== -1 && row[debitIdx] !== undefined) {
+        const rawDebit = row[debitIdx];
+        if (typeof rawDebit === 'number') debit = rawDebit;
+        else if (typeof rawDebit === 'string') debit = parseFloat(rawDebit.replace(/[^\d.-]/g, '')) || 0;
+      }
+      if (creditIdx !== -1 && row[creditIdx] !== undefined) {
+        const rawCredit = row[creditIdx];
+        if (typeof rawCredit === 'number') credit = rawCredit;
+        else if (typeof rawCredit === 'string') credit = parseFloat(rawCredit.replace(/[^\d.-]/g, '')) || 0;
+      }
+
+      if (credit > 0) {
+        amount = credit;
+      } else if (debit > 0) {
+        amount = -Math.abs(debit);
+      }
     }
 
-    if (isNaN(amount)) continue;
+    if (isNaN(amount) || amount === 0) continue;
 
     const type = amount >= 0 ? 'inflow' : 'outflow';
-
-    // Determine category
-    let category = '';
-    if (mapping.categoryIdx !== null && row[mapping.categoryIdx] !== undefined) {
-      category = String(row[mapping.categoryIdx]).trim();
-    } else {
-      category = guessCategory(description, amount);
-    }
+    const category = guessCategory(description, amount);
 
     transactions.push({
       date,
@@ -247,16 +319,31 @@ export function createReportFromRows(
     });
   }
 
-  // Sort transactions by date ascending
+  // Sort transactions chronologically
   transactions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const startDate = transactions.length > 0 ? transactions[0].date : new Date().toISOString().split('T')[0];
   const endDate = transactions.length > 0 ? transactions[transactions.length - 1].date : new Date().toISOString().split('T')[0];
 
+  // Dynamically guess currency attributes based on typical file indicators or keywords
+  let currencySymbol = '₦';
+  let currencyCode = 'NGN';
+  const fileLower = fileName.toLowerCase();
+  if (fileLower.includes('usd') || fileLower.includes('dollar') || fileLower.includes('usa')) {
+    currencySymbol = '$';
+    currencyCode = 'USD';
+  } else if (fileLower.includes('eur') || fileLower.includes('euro') || fileLower.includes('europe')) {
+    currencySymbol = '€';
+    currencyCode = 'EUR';
+  } else if (fileLower.includes('gbp') || fileLower.includes('pound') || fileLower.includes('uk')) {
+    currencySymbol = '£';
+    currencyCode = 'GBP';
+  }
+
   return {
     title: `Private Report · ${fileName.split('.')[0]}`,
     currency: currencyCode,
-    currencySymbol: currencySymbol,
+    currencySymbol,
     startDate,
     endDate,
     transactions

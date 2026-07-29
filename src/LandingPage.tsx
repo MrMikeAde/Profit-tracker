@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Shield, RefreshCw, BarChart4 } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -28,7 +28,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         </div>
       </div>
 
-      {/* Styled 3-Step Process Steps (Replacing old features) */}
+      {/* Styled 3-Step Process Steps */}
       <div className="border-t border-gray-100 pt-16">
         <div className="text-center mb-16">
           <span className="text-xs font-bold text-[#117aca] uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
@@ -39,45 +39,45 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Step 1 */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm hover:shadow-md transition relative overflow-hidden group">
-            <div className="absolute top-4 right-6 text-6xl font-black text-gray-100/60 select-none group-hover:text-[#117aca]/10 transition">
-              01
+          <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm hover:shadow-md transition relative group flex flex-col justify-between">
+            <div>
+              {/* Extremely Prominent & Visible Large Numeric Indicator */}
+              <div className="text-4xl font-extrabold text-[#117aca] tracking-tight mb-5 select-none">
+                01
+              </div>
+              <h3 className="text-xl font-bold text-[#0a2540] mb-3">Upload your bank statements</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">
+                Securely drop your raw bank PDF, CSV, or Excel exports. Our client-side analyzer processes files entirely in-memory, keeping your data 100% confidential.
+              </p>
             </div>
-            <div className="w-12 h-12 bg-[#117aca]/10 rounded-xl flex items-center justify-center text-[#117aca] mb-6">
-              <Shield className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-[#0a2540] mb-3">Upload your bank statements</h3>
-            <p className="text-sm text-gray-500 leading-relaxed">
-              Securely drop your raw PDF, CSV, or Excel exports. Our client-side analyzer processes files entirely in-memory, keeping your data 100% confidential.
-            </p>
           </div>
 
           {/* Step 2 */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm hover:shadow-md transition relative overflow-hidden group">
-            <div className="absolute top-4 right-6 text-6xl font-black text-gray-100/60 select-none group-hover:text-[#117aca]/10 transition">
-              02
+          <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm hover:shadow-md transition relative group flex flex-col justify-between">
+            <div>
+              {/* Extremely Prominent & Visible Large Numeric Indicator */}
+              <div className="text-4xl font-extrabold text-[#117aca] tracking-tight mb-5 select-none">
+                02
+              </div>
+              <h3 className="text-xl font-bold text-[#0a2540] mb-3">We normalize and verify totals</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">
+                The engine automatically maps layout columns, reconciles multi-currency attributes, and cross-checks mathematical totals to align transactions perfectly.
+              </p>
             </div>
-            <div className="w-12 h-12 bg-[#004b87]/10 rounded-xl flex items-center justify-center text-[#004b87] mb-6">
-              <RefreshCw className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-[#0a2540] mb-3">We normalize and verify totals</h3>
-            <p className="text-sm text-gray-500 leading-relaxed">
-              The engine automatically maps layout columns, reconciles multi-currency attributes, and cross-checks mathematical totals to align transactions perfectly.
-            </p>
           </div>
 
           {/* Step 3 */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm hover:shadow-md transition relative overflow-hidden group">
-            <div className="absolute top-4 right-6 text-6xl font-black text-gray-100/60 select-none group-hover:text-[#117aca]/10 transition">
-              03
+          <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm hover:shadow-md transition relative group flex flex-col justify-between">
+            <div>
+              {/* Extremely Prominent & Visible Large Numeric Indicator */}
+              <div className="text-4xl font-extrabold text-[#117aca] tracking-tight mb-5 select-none">
+                03
+              </div>
+              <h3 className="text-xl font-bold text-[#0a2540] mb-3">Open your private money page</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">
+                Explore your beautiful custom capital progression chart, daily spending rhythm heatmap, savings rate gauges, and recurring subscription predictions.
+              </p>
             </div>
-            <div className="w-12 h-12 bg-[#ffb81c]/15 rounded-xl flex items-center justify-center text-[#d97706] mb-6">
-              <BarChart4 className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-[#0a2540] mb-3">Open your private money page</h3>
-            <p className="text-sm text-gray-500 leading-relaxed">
-              Explore your beautiful custom capital progression chart, daily spending rhythm heatmap, savings rate gauges, and recurring subscription predictions.
-            </p>
           </div>
         </div>
       </div>
