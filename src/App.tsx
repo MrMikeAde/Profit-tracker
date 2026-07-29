@@ -3,9 +3,7 @@ import { Layout } from './Layout';
 import { LandingPage } from './LandingPage';
 import { ColumnMapper } from './ColumnMapper';
 import { Dashboard } from './Dashboard';
-import { parseStatementFile } from './parser';
-import type { ReportData } from './demoData';
-import { DEMO_NAIRA_REPORT, DEMO_USD_REPORT, DEMO_EUR_REPORT } from './demoData';
+import { parseStatementFile, type ReportData } from './parser';
 
 export default function App() {
   const [viewState, setViewState] = useState<'landing' | 'mapper' | 'dashboard'>('landing');
@@ -17,18 +15,6 @@ export default function App() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' as any });
   }, [viewState]);
-
-  // Load predefined demo presets
-  const handleLoadPreset = (preset: 'naira' | 'usd' | 'eur') => {
-    if (preset === 'naira') {
-      setReport(DEMO_NAIRA_REPORT);
-    } else if (preset === 'usd') {
-      setReport(DEMO_USD_REPORT);
-    } else {
-      setReport(DEMO_EUR_REPORT);
-    }
-    setViewState('dashboard');
-  };
 
   // Handle spreadsheet or PDF file upload
   const handleFileUpload = async (file: File) => {
@@ -64,7 +50,7 @@ export default function App() {
   return (
     <Layout onReset={handleReset} showReset={viewState !== 'landing'}>
       {viewState === 'landing' && (
-        <LandingPage onLoadPreset={handleLoadPreset} onFileUpload={handleFileUpload} />
+        <LandingPage onFileUpload={handleFileUpload} />
       )}
 
       {viewState === 'mapper' && (

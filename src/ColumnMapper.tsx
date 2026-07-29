@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Columns, ArrowRight, Check } from 'lucide-react';
-import { createReportFromRows } from './parser';
-import type { ReportData } from './demoData';
+import { createReportFromRows, type ReportData } from './parser';
 
 interface ColumnMapperProps {
   fileName: string;

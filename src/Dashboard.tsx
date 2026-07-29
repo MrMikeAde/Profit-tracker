@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { Calendar, TrendingUp, TrendingDown, CalendarDays, BarChart3, Globe, Download } from 'lucide-react';
-import type { ReportData } from './demoData';
+import { Calendar, TrendingUp, TrendingDown, CalendarDays, BarChart3, Globe, Download, Zap, Sparkles, AlertTriangle } from 'lucide-react';
+import type { ReportData } from './parser';
 
 interface DashboardProps {
   report: ReportData;
@@ -26,7 +26,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
     return `${sign}${symbol}${absVal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
   };
 
-  // 1. Calculations: Metric Cards
+  // 1. Core metric card calculations
   const metrics = useMemo(() => {
     let totalInflow = 0;
     let numInflow = 0;
@@ -59,7 +59,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
     };
   }, [report]);
 
-  // Year filter selection
+  // Year filter list
   const yearsList = useMemo(() => {
     const years = new Set<number>();
     report.transactions.forEach((tx) => {
@@ -81,17 +81,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
 
   // 2. Spending Rhythm Heatmap Grid (Github Style)
   const heatmapData = useMemo(() => {
-    // Generate dates map for selectedYearHeatmap
     const daysMap: { [key: string]: number } = {};
     report.transactions.forEach((tx) => {
       const d = new Date(tx.date);
       if (d.getFullYear() === selectedYearHeatmap) {
-        const key = tx.date; // YYYY-MM-DD
+        const key = tx.date;
         daysMap[key] = (daysMap[key] || 0) + 1;
       }
     });
 
-    // Generate days of the year calendar grid
     const startDate = new Date(selectedYearHeatmap, 0, 1);
     const endDate = new Date(selectedYearHeatmap, 11, 31);
     const dates: { date: string; count: number; dayOfWeek: number; month: number }[] = [];
@@ -106,7 +104,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
       dates.push({
         date: dateStr,
         count: daysMap[dateStr] || 0,
-        dayOfWeek: temp.getDay(), // 0 = Sunday, 6 = Saturday
+        dayOfWeek: temp.getDay(),
         month: temp.getMonth()
       });
       temp.setDate(temp.getDate() + 1);
@@ -116,7 +114,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
 
   const monthsAbbr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-  // Heatmap helper to get color shade class based on transaction frequency
   const getShadeClass = (count: number) => {
     if (count === 0) return 'bg-gray-100 hover:bg-gray-200';
     if (count <= 1) return 'bg-blue-100 hover:bg-blue-200';
@@ -129,15 +126,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
   const areaChartData = useMemo(() => {
     let runningBalance = 0;
     const sorted = [...report.transactions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-    // Group or downsample by month/date to keep charts fast & beautifully readable
     const dataPoints: { name: string; balance: number }[] = [];
 
     sorted.forEach((tx) => {
       runningBalance += tx.amount;
       const formattedDate = new Date(tx.date).toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
 
-      // Update last or push new
       if (dataPoints.length > 0 && dataPoints[dataPoints.length - 1].name === formattedDate) {
         dataPoints[dataPoints.length - 1].balance = runningBalance;
       } else {
@@ -172,7 +166,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
     }));
   }, [filteredTransactionsForCharts]);
 
-  // 5. Categorized Breakdown Analysis
+  // 5. Categorized breakdown analysis
   const categorizedExpenses = useMemo(() => {
     const map: { [key: string]: number } = {};
     let total = 0;
@@ -206,7 +200,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
     })).sort((a, b) => b.amount - a.amount);
   }, [report]);
 
-  // 6. Payee and Payer Analysis
+  // 6. Payee and Payer Leaderboard
   const topPayees = useMemo(() => {
     const map: { [key: string]: { amount: number; count: number } } = {};
     report.transactions.forEach((tx) => {
@@ -264,7 +258,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
     const monthlyMap: { [key: string]: number } = {};
     report.transactions.forEach((tx) => {
       if (tx.amount < 0) {
-        const key = tx.date.substring(0, 7); // YYYY-MM
+        const key = tx.date.substring(0, 7);
         monthlyMap[key] = (monthlyMap[key] || 0) + Math.abs(tx.amount);
       }
     });
@@ -273,6 +267,121 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
     const totalDebits = months.reduce((sum, m) => sum + monthlyMap[m], 0);
     return totalDebits / months.length;
   }, [report]);
+
+  // ADVANCED FINANCIAL INTELLIGENCE CALCULATIONS
+  const advancedAnalytics = useMemo(() => {
+    // A. Savings Rate
+    const savingsRate = metrics.totalInflow > 0 ? (metrics.netFlow / metrics.totalInflow) * 100 : 0;
+    let savingsGrade = 'Deficit Spend';
+    let savingsColor = 'text-red-500 bg-red-50 border-red-200';
+    if (metrics.netFlow >= 0) {
+      if (savingsRate >= 50) {
+        savingsGrade = 'Elite Savings Rate';
+        savingsColor = 'text-emerald-700 bg-emerald-50 border-emerald-200';
+      } else if (savingsRate >= 30) {
+        savingsGrade = 'Healthy / High Efficiency';
+        savingsColor = 'text-green-700 bg-green-50 border-green-200';
+      } else if (savingsRate >= 10) {
+        savingsGrade = 'Moderate Savings';
+        savingsColor = 'text-blue-700 bg-blue-50 border-blue-200';
+      } else {
+        savingsGrade = 'Low Capital Efficiency';
+        savingsColor = 'text-amber-700 bg-amber-50 border-amber-200';
+      }
+    }
+
+    // B. Month-Over-Month growth trend of net cash flows
+    const monthlyNetMap: { [key: string]: number } = {};
+    report.transactions.forEach(tx => {
+      const key = tx.date.substring(0, 7);
+      monthlyNetMap[key] = (monthlyNetMap[key] || 0) + tx.amount;
+    });
+    const sortedMonths = Object.keys(monthlyNetMap).sort();
+    let momGrowth = 0;
+    let momTrend: 'up' | 'down' | 'flat' = 'flat';
+    if (sortedMonths.length >= 2) {
+      const lastMonth = monthlyNetMap[sortedMonths[sortedMonths.length - 1]];
+      const prevMonth = monthlyNetMap[sortedMonths[sortedMonths.length - 2]];
+      if (prevMonth !== 0) {
+        momGrowth = ((lastMonth - prevMonth) / Math.abs(prevMonth)) * 100;
+        if (momGrowth > 0.5) momTrend = 'up';
+        else if (momGrowth < -0.5) momTrend = 'down';
+      }
+    }
+
+    // C. Capital Runway / Compounded Future Wealth
+    const monthlyInflowMap: { [key: string]: number } = {};
+    report.transactions.forEach(tx => {
+      if (tx.amount >= 0) {
+        const key = tx.date.substring(0, 7);
+        monthlyInflowMap[key] = (monthlyInflowMap[key] || 0) + tx.amount;
+      }
+    });
+    const sortedInflowMonths = Object.keys(monthlyInflowMap);
+    const avgMonthlyInflow = sortedInflowMonths.length > 0
+      ? sortedInflowMonths.reduce((sum, m) => sum + monthlyInflowMap[m], 0) / sortedInflowMonths.length
+      : 0;
+
+    const netBurnRate = averageMonthlyDebit - avgMonthlyInflow;
+    const currentRunwayMonths = (netBurnRate > 0 && metrics.netFlow < 0)
+      ? Math.max(0, metrics.netFlow / -netBurnRate)
+      : null;
+
+    // Compound calculation (Wealth projection over 5 years assuming conservative 7% annual return)
+    const compoundFutureWealth = metrics.netFlow > 0
+      ? metrics.netFlow * Math.pow(1 + 0.07, 5)
+      : 0;
+
+    // D. Smart Recurring Charges Predictor Engine (low variance description match)
+    const groups: { [key: string]: { amounts: number[]; dates: string[] } } = {};
+    report.transactions.forEach(tx => {
+      if (tx.amount < 0) {
+        const words = tx.description.toLowerCase().split(/[ \-_]/).filter(w => w.length > 2);
+        const key = words.slice(0, 2).join(' ') || tx.description.toLowerCase();
+        if (!groups[key]) {
+          groups[key] = { amounts: [], dates: [] };
+        }
+        groups[key].amounts.push(Math.abs(tx.amount));
+        groups[key].dates.push(tx.date);
+      }
+    });
+
+    const recurringList: { name: string; avgAmount: number; count: number }[] = [];
+    Object.keys(groups).forEach(key => {
+      const item = groups[key];
+      if (item.dates.length >= 2) {
+        const monthsSet = new Set(item.dates.map(d => d.substring(0, 7)));
+        if (monthsSet.size >= 2) {
+          const mean = item.amounts.reduce((sum, a) => sum + a, 0) / item.amounts.length;
+          const isConsistent = item.amounts.every(a => Math.abs(a - mean) / mean < 0.35);
+          if (isConsistent) {
+            const originalTx = report.transactions.find(tx => {
+              const words = tx.description.toLowerCase().split(/[ \-_]/).filter(w => w.length > 2);
+              const originalKey = words.slice(0, 2).join(' ') || tx.description.toLowerCase();
+              return originalKey === key;
+            });
+            recurringList.push({
+              name: originalTx ? originalTx.description : key,
+              avgAmount: mean,
+              count: item.dates.length
+            });
+          }
+        }
+      }
+    });
+
+    return {
+      savingsRate,
+      savingsGrade,
+      savingsColor,
+      momGrowth,
+      momTrend,
+      currentRunwayMonths,
+      netBurnRate,
+      compoundFutureWealth,
+      recurringList: recurringList.sort((a, b) => b.avgAmount - a.avgAmount).slice(0, 5)
+    };
+  }, [report, metrics, averageMonthlyDebit]);
 
   const handlePrint = () => {
     window.print();
@@ -371,6 +480,115 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
           </div>
           <div className="w-12 h-12 bg-[#ffb81c]/10 rounded-lg flex items-center justify-center text-amber-600">
             <BarChart3 className="w-6 h-6" />
+          </div>
+        </div>
+      </div>
+
+      {/* NEW: WHATIEARN FINANCIAL INTELLIGENCE SUITE */}
+      <div className="bg-gradient-to-tr from-slate-900 to-[#0a2540] text-white rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-800">
+        <div className="flex items-center gap-2 mb-6">
+          <Zap className="w-5 h-5 text-[#ffb81c] animate-bounce" />
+          <div>
+            <h3 className="text-lg font-bold">WhatIEarn Capital Intelligence Insights</h3>
+            <p className="text-xs text-blue-200">Autonomous pattern extraction & efficiency forecasting</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Savings Rate Efficiency Indicator */}
+          <div className="bg-white/5 border border-white/10 rounded-xl p-5 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-blue-300">Capital Efficiency</span>
+                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${advancedAnalytics.savingsColor}`}>
+                  {advancedAnalytics.savingsGrade}
+                </span>
+              </div>
+              <h4 className="text-3xl font-black mb-1">{advancedAnalytics.savingsRate.toFixed(1)}%</h4>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                The ratio of net capital retained relative to total incoming cash flow during the period. Higher represents elevated asset security.
+              </p>
+            </div>
+            <div className="mt-5 w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-1000 ${
+                  advancedAnalytics.savingsRate >= 30 ? 'bg-emerald-500' : 'bg-amber-400'
+                }`}
+                style={{ width: `${Math.max(0, Math.min(100, advancedAnalytics.savingsRate))}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Runway or Compounding Projections */}
+          <div className="bg-white/5 border border-white/10 rounded-xl p-5 flex flex-col justify-between">
+            {metrics.netFlow >= 0 ? (
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-blue-300 block mb-3">Wealth Compounder Forecast</span>
+                <h4 className="text-2xl font-black text-emerald-400 mb-1">{formatValue(advancedAnalytics.compoundFutureWealth)}</h4>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Projected compounding value of current net earnings in **5 years** at a conservative **7% annual yield** without extra deposits.
+                </p>
+                <div className="mt-4 flex items-center gap-1 text-[10px] text-[#ffb81c] font-semibold bg-[#ffb81c]/10 border border-[#ffb81c]/20 px-2.5 py-1 rounded">
+                  <Sparkles className="w-3 h-3 shrink-0" />
+                  <span>Sustained growth compounds capital security.</span>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-red-300 flex items-center gap-1.5 mb-3">
+                  <AlertTriangle className="w-3.5 h-3.5 text-[#ffb81c]" /> Cash Runway Alert
+                </span>
+                <h4 className="text-2xl font-black text-red-400 mb-1">
+                  {advancedAnalytics.currentRunwayMonths !== null
+                    ? `${advancedAnalytics.currentRunwayMonths.toFixed(1)} Months`
+                    : 'Deficit Risk'}
+                </h4>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Calculated based on current burn rate ({formatValue(advancedAnalytics.netBurnRate)}/mo). Action is recommended to reduce recurring outlays.
+                </p>
+              </div>
+            )}
+
+            <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-blue-200 font-bold">
+              <span>MoM Trend Status:</span>
+              <span className="flex items-center gap-1">
+                {advancedAnalytics.momTrend === 'up' && (
+                  <span className="text-emerald-400 flex items-center gap-0.5">
+                    <TrendingUp className="w-3.5 h-3.5" /> +{advancedAnalytics.momGrowth.toFixed(1)}% Upward
+                  </span>
+                )}
+                {advancedAnalytics.momTrend === 'down' && (
+                  <span className="text-red-400 flex items-center gap-0.5">
+                    <TrendingDown className="w-3.5 h-3.5" /> {advancedAnalytics.momGrowth.toFixed(1)}% Contraction
+                  </span>
+                )}
+                {advancedAnalytics.momTrend === 'flat' && <span className="text-gray-400">Stable / Linear</span>}
+              </span>
+            </div>
+          </div>
+
+          {/* Smart Subscription Detector */}
+          <div className="bg-white/5 border border-white/10 rounded-xl p-5 flex flex-col justify-between">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-blue-300 block mb-3">Predicted Recurring Subscriptions</span>
+              {advancedAnalytics.recurringList.length === 0 ? (
+                <p className="text-xs text-slate-400 py-4 text-center">No regular monthly outlays detected.</p>
+              ) : (
+                <div className="space-y-2.5 max-h-[140px] overflow-y-auto pr-1">
+                  {advancedAnalytics.recurringList.map((rec, idx) => (
+                    <div key={idx} className="flex items-center justify-between text-xs">
+                      <div className="truncate pr-2">
+                        <div className="font-bold text-slate-100 truncate max-w-[150px]">{rec.name}</div>
+                        <div className="text-[10px] text-slate-400">{rec.count} monthly intervals</div>
+                      </div>
+                      <span className="font-bold text-red-300 bg-red-950/40 border border-red-900/30 px-1.5 py-0.5 rounded text-[10px]">
+                        ~{formatValue(rec.avgAmount)}/mo
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

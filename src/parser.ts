@@ -1,5 +1,21 @@
 import * as XLSX from 'xlsx';
-import type { Transaction, ReportData } from './demoData';
+
+export interface Transaction {
+  date: string; // YYYY-MM-DD
+  description: string;
+  amount: number; // positive for inflow, negative for outflow
+  category: string;
+  type: 'inflow' | 'outflow';
+}
+
+export interface ReportData {
+  title: string;
+  currency: string;
+  currencySymbol: string;
+  startDate: string;
+  endDate: string;
+  transactions: Transaction[];
+}
 
 export interface ParsedRow {
   date: string;
