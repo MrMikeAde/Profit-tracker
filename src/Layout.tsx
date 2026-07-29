@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, FileText, ArrowLeft } from 'lucide-react';
+import { ShieldCheck, ArrowLeft, TrendingUp } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -9,41 +9,29 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children, onReset, showReset = false }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-      {/* Premium Chase-style Header */}
-      <header className="bg-[#0a2540] text-white shadow-md sticky top-0 z-50">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans">
+      {/* Premium Header */}
+      <header className="bg-[#0a2540] text-white shadow-md sticky top-0 z-50 border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => onReset?.()}>
-            {/* Chase Bank Styled Octagon Emblem Logo SVG */}
-            <div className="w-8 h-8 relative flex items-center justify-center bg-white rounded-md p-1">
-              <svg viewBox="0 0 100 100" className="w-full h-full text-[#117aca]" fill="currentColor">
-                <polygon points="50,15 85,50 50,85 15,50" />
-                <polygon points="50,28 72,50 50,72 28,50" className="text-white" />
-                <polygon points="50,38 62,50 50,62 38,50" />
-              </svg>
+          <div className="flex items-center gap-3 cursor-pointer select-none" onClick={() => onReset?.()}>
+            {/* Custom Sleek Logo Emblem */}
+            <div className="w-9 h-9 relative flex items-center justify-center bg-gradient-to-tr from-[#117aca] to-[#004b87] rounded-lg shadow-inner">
+              <TrendingUp className="w-5 h-5 text-white" />
+              <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#ffb81c] rounded-full animate-pulse" />
             </div>
             <div>
-              <span className="text-lg font-extrabold tracking-wider text-white uppercase">
-                CHASE<span className="text-[#ffb81c] font-normal lowercase ml-1">inspired</span>
+              <span className="text-xl font-extrabold tracking-tight text-white">
+                What<span className="text-[#ffb81c]">I</span>Earn
               </span>
               <div className="text-[10px] text-blue-200 tracking-widest uppercase font-semibold">Profit Tracker</div>
             </div>
           </div>
 
           <nav className="flex items-center gap-4">
-            <a
-              href="https://moneypage.xyz"
-              target="_blank"
-              rel="noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 text-xs text-blue-200 hover:text-white transition font-medium"
-            >
-              <FileText className="w-3.5 h-3.5" /> original moneypage.xyz
-            </a>
-
             {showReset && onReset && (
               <button
                 onClick={onReset}
-                className="inline-flex items-center gap-1.5 bg-[#117aca] hover:bg-[#004b87] text-white px-3 py-1.5 rounded-md text-xs font-bold transition shadow-sm cursor-pointer"
+                className="inline-flex items-center gap-1.5 bg-[#117aca] hover:bg-[#004b87] text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-sm cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> New Report
               </button>
@@ -58,27 +46,27 @@ export const Layout: React.FC<LayoutProps> = ({ children, onReset, showReset = f
       </main>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-slate-400 border-t border-slate-800 py-10 mt-12">
+      <footer className="bg-slate-950 text-slate-400 border-t border-slate-900 py-12 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left sm:flex sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm">
-              &copy; {new Date().getFullYear()} Profit Tracker. Recreated with premium Chase Bank inspiration.
+            <p className="text-sm font-semibold text-white">
+              WhatIEarn Profit Tracker
             </p>
-            <p className="text-xs text-slate-500 mt-1">
-              Inspired by the simplicity of MoneyPage. All rights reserved to their respective creators.
+            <p className="text-xs text-slate-500 mt-1.5">
+              Premium privacy-first client-side financial analytics dashboard. &copy; {new Date().getFullYear()} WhatIEarn. All rights reserved.
             </p>
           </div>
-          <div className="mt-4 sm:mt-0 flex justify-center sm:justify-end gap-6 text-xs font-semibold">
-            <span className="flex items-center gap-1 text-emerald-400">
+          <div className="mt-6 sm:mt-0 flex flex-wrap justify-center sm:justify-end gap-6 text-xs font-semibold">
+            <span className="flex items-center gap-1.5 text-emerald-400 bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-900/30">
               <ShieldCheck className="w-4 h-4" /> 100% Client-side privacy
             </span>
             <a
-              href="https://moneypage.xyz"
+              href="https://whatiearn.netlify.app"
               target="_blank"
               rel="noreferrer"
-              className="hover:text-white transition"
+              className="text-blue-400 hover:text-blue-300 transition flex items-center"
             >
-              Documentation
+              Live Site
             </a>
           </div>
         </div>

@@ -203,7 +203,7 @@ export const ColumnMapper: React.FC<ColumnMapperProps> = ({
                   }}
                   className="w-full bg-white border border-gray-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-[#117aca] focus:border-transparent outline-none"
                 >
-                  <option value={-1}>Auto-Categorize (Smart AI Guest)</option>
+                  <option value={-1}>Auto-Categorize (Smart Pattern Match)</option>
                   {headerRow.map((col, idx) => (
                     <option key={idx} value={idx}>
                       Col {idx + 1}: {String(col || `[Empty ${idx + 1}]`)}

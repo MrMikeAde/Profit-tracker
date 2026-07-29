@@ -312,7 +312,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
       <div className="hidden print:block mb-8">
         <h1 className="text-3xl font-black text-[#0a2540]">{report.title}</h1>
         <p className="text-sm text-gray-500">
-          Statement Period: {report.startDate} to {report.endDate} · Generated with Chase Inspired Profit Tracker
+          Statement Period: {report.startDate} to {report.endDate} · Generated with WhatIEarn Profit Tracker
         </p>
       </div>
 

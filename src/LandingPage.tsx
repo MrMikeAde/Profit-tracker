@@ -47,11 +47,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLoadPreset, onFileUp
       {/* Hero Section */}
       <div className="text-center mb-16">
         <div className="inline-flex items-center gap-2 bg-[#ffb81c]/10 text-[#004b87] border border-[#ffb81c]/30 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider mb-6">
-          <Sparkles className="w-3.5 h-3.5" /> Inspired by Chase Bank's Premium Security & Design
+          <Sparkles className="w-3.5 h-3.5 text-[#ffb81c]" /> Zero-Database &middot; Enterprise-Grade Security
         </div>
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-[#0a2540] leading-tight max-w-4xl mx-auto">
           Years of Financial Statements.<br />
-          <span className="text-[#117aca]">One Gorgeous Profit Tracker.</span>
+          <span className="text-[#117aca]">One Beautiful Profit Tracker.</span>
         </h1>
         <p className="mt-6 text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
           Add CSV or Excel bank statements from any of your financial institutions and instantly convert them into a beautiful, interactive private profit tracker page.
