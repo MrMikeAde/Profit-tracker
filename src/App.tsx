@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Layout } from './Layout';
 import { LandingPage } from './LandingPage';
+import { UploadPage } from './UploadPage';
 import { ColumnMapper } from './ColumnMapper';
 import { Dashboard } from './Dashboard';
 import { parseStatementFile, type ReportData } from './parser';
 
 export default function App() {
-  const [viewState, setViewState] = useState<'landing' | 'mapper' | 'dashboard'>('landing');
+  const [viewState, setViewState] = useState<'landing' | 'upload' | 'mapper' | 'dashboard'>('landing');
   const [fileName, setFileName] = useState('');
   const [rawRows, setRawRows] = useState<any[][]>([]);
   const [report, setReport] = useState<ReportData | null>(null);
@@ -50,7 +51,11 @@ export default function App() {
   return (
     <Layout onReset={handleReset} showReset={viewState !== 'landing'}>
       {viewState === 'landing' && (
-        <LandingPage onFileUpload={handleFileUpload} />
+        <LandingPage onGetStarted={() => setViewState('upload')} />
+      )}
+
+      {viewState === 'upload' && (
+        <UploadPage onFileUpload={handleFileUpload} onBack={handleReset} />
       )}
 
       {viewState === 'mapper' && (

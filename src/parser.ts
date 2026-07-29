@@ -27,6 +27,12 @@ export interface ParsedRow {
 
 // Convert common Excel serial date format to YYYY-MM-DD
 function parseExcelDate(serial: any): string {
+  if (serial instanceof Date) {
+    const yyyy = serial.getFullYear();
+    const mm = String(serial.getMonth() + 1).padStart(2, '0');
+    const dd = String(serial.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
   if (typeof serial === 'number') {
     const utcDays = Math.floor(serial - 25569);
     const utcValue = utcDays * 86400;
