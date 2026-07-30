@@ -115,11 +115,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
   const monthsAbbr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   const getShadeClass = (count: number) => {
-    if (count === 0) return 'bg-gray-100 hover:bg-gray-200';
-    if (count <= 1) return 'bg-blue-100 hover:bg-blue-200';
-    if (count <= 2) return 'bg-blue-300 hover:bg-blue-400';
-    if (count <= 4) return 'bg-blue-500 hover:bg-blue-600';
-    return 'bg-[#004b87] hover:bg-[#0a2540]';
+    if (count === 0) return 'bg-white hover:bg-gray-100 border border-gray-200/50';
+    if (count <= 1) return 'bg-[#d1fae5] hover:bg-[#a7f3d0]'; // very light mint green
+    if (count <= 2) return 'bg-[#6ee7b7] hover:bg-[#34d399]'; // light mint
+    if (count <= 4) return 'bg-[#10b981] hover:bg-[#059669]'; // bright mint
+    return 'bg-[#0F4A27] hover:bg-[#0B3C22]'; // dark green
   };
 
   // 3. Balance Over Time (Area Chart Data)
@@ -272,17 +272,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
   const advancedAnalytics = useMemo(() => {
     const savingsRate = metrics.totalInflow > 0 ? (metrics.netFlow / metrics.totalInflow) * 100 : 0;
     let savingsGrade = 'Deficit Spend';
-    let savingsColor = 'text-red-500 bg-red-50 border-red-200';
+    let savingsColor = 'text-soft-coral bg-red-50 border-red-200';
     if (metrics.netFlow >= 0) {
       if (savingsRate >= 50) {
         savingsGrade = 'Elite Savings';
-        savingsColor = 'text-emerald-700 bg-emerald-50 border-emerald-200';
+        savingsColor = 'text-bright-mint bg-[#122238]/20 border-bright-mint/30';
       } else if (savingsRate >= 30) {
         savingsGrade = 'Healthy / High Efficiency';
-        savingsColor = 'text-green-700 bg-green-50 border-green-200';
+        savingsColor = 'text-bright-mint bg-emerald-50 border-emerald-200';
       } else if (savingsRate >= 10) {
         savingsGrade = 'Moderate Savings';
-        savingsColor = 'text-blue-700 bg-blue-50 border-blue-200';
+        savingsColor = 'text-bright-mint/80 bg-emerald-50/50 border-emerald-100';
       } else {
         savingsGrade = 'Low Efficiency';
         savingsColor = 'text-amber-700 bg-amber-50 border-amber-200';
@@ -387,10 +387,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
       {/* Header section with print trigger */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-200 pb-5 print:hidden">
         <div className="min-w-0">
-          <div className="flex items-center gap-2 text-sm font-semibold text-[#117aca] uppercase tracking-wider select-none">
+          <div className="flex items-center gap-2 text-sm font-semibold text-bright-mint uppercase tracking-wider select-none">
             <Globe className="w-4 h-4 shrink-0" /> Client-Side Certified Safe Report
           </div>
-          <h2 className="text-2xl font-black text-[#0a2540] mt-1 truncate">{report.title}</h2>
+          <h2 className="text-2xl font-black text-dark-green mt-1 truncate">{report.title}</h2>
           <p className="text-sm text-gray-500 mt-1 truncate">
             Period: {new Date(report.startDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })} — {new Date(report.endDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })} &middot; {metrics.totalTransactions} transactions
           </p>
@@ -414,7 +414,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
 
       {/* PRINT-ONLY HEADER */}
       <div className="hidden print:block mb-8">
-        <h1 className="text-3xl font-black text-[#0a2540]">{report.title}</h1>
+        <h1 className="text-3xl font-black text-dark-green">{report.title}</h1>
         <p className="text-sm text-gray-500">
           Statement Period: {report.startDate} to {report.endDate} &middot; Generated with WhatIEarn Profit Tracker
         </p>
@@ -425,12 +425,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex items-center justify-between transition hover:shadow-md min-w-0">
           <div className="min-w-0">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block truncate">Total Inflow</span>
-            <h3 className="text-2xl font-black text-emerald-600 mt-1 truncate">{formatValue(metrics.totalInflow)}</h3>
-            <span className="text-xs text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded font-semibold inline-block mt-2 truncate">
+            <h3 className="text-2xl font-black text-bright-mint mt-1 truncate">{formatValue(metrics.totalInflow)}</h3>
+            <span className="text-xs text-bright-mint bg-emerald-50 px-2 py-0.5 rounded font-semibold inline-block mt-2 truncate">
               {metrics.numInflow} credits
             </span>
           </div>
-          <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 shrink-0 ml-3">
+          <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center text-bright-mint shrink-0 ml-3">
             <TrendingUp className="w-6 h-6" />
           </div>
         </div>
@@ -438,12 +438,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex items-center justify-between transition hover:shadow-md min-w-0">
           <div className="min-w-0">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block truncate">Total Outflow</span>
-            <h3 className="text-2xl font-black text-red-600 mt-1 truncate">{formatValue(metrics.totalOutflow)}</h3>
-            <span className="text-xs text-red-500 bg-red-50 px-2 py-0.5 rounded font-semibold inline-block mt-2 truncate">
+            <h3 className="text-2xl font-black text-soft-coral mt-1 truncate">{formatValue(metrics.totalOutflow)}</h3>
+            <span className="text-xs text-soft-coral bg-red-50 px-2 py-0.5 rounded font-semibold inline-block mt-2 truncate">
               {metrics.numOutflow} debits
             </span>
           </div>
-          <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-red-600 shrink-0 ml-3">
+          <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-soft-coral shrink-0 ml-3">
             <TrendingDown className="w-6 h-6" />
           </div>
         </div>
@@ -451,14 +451,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex items-center justify-between transition hover:shadow-md min-w-0">
           <div className="min-w-0">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block truncate">Net Flow</span>
-            <h3 className={`text-2xl font-black mt-1 truncate ${metrics.netFlow >= 0 ? 'text-[#117aca]' : 'text-red-700'}`}>
+            <h3 className={`text-2xl font-black mt-1 truncate ${metrics.netFlow >= 0 ? 'text-dark-green' : 'text-soft-coral'}`}>
               {formatValue(metrics.netFlow)}
             </h3>
-            <span className={`text-xs px-2 py-0.5 rounded font-semibold inline-block mt-2 truncate ${metrics.netFlow >= 0 ? 'text-[#117aca] bg-blue-50' : 'text-red-700 bg-red-50'}`}>
+            <span className={`text-xs px-2 py-0.5 rounded font-semibold inline-block mt-2 truncate ${metrics.netFlow >= 0 ? 'text-bright-mint bg-emerald-50' : 'text-soft-coral bg-red-50'}`}>
               {metrics.netFlow >= 0 ? 'Positive Net' : 'Deficit'}
             </span>
           </div>
-          <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-[#117aca] shrink-0 ml-3">
+          <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center text-dark-green shrink-0 ml-3">
             <Calendar className="w-6 h-6" />
           </div>
         </div>
@@ -466,26 +466,26 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex items-center justify-between transition hover:shadow-md min-w-0">
           <div className="min-w-0">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block truncate">Closing Balance</span>
-            <h3 className="text-2xl font-black text-[#0a2540] mt-1 truncate">
+            <h3 className="text-2xl font-black text-dark-green mt-1 truncate">
               {formatValue(metrics.netFlow)}
             </h3>
-            <span className="text-xs text-[#0a2540] bg-[#ffb81c]/10 px-2 py-0.5 rounded font-semibold inline-block mt-2 truncate">
+            <span className="text-xs text-white bg-dark-green px-2 py-0.5 rounded font-semibold inline-block mt-2 truncate">
               {metrics.yearsDifference} years in view
             </span>
           </div>
-          <div className="w-12 h-12 bg-[#ffb81c]/10 rounded-lg flex items-center justify-center text-amber-600 shrink-0 ml-3">
+          <div className="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center text-dark-green shrink-0 ml-3">
             <BarChart3 className="w-6 h-6" />
           </div>
         </div>
       </div>
 
-      {/* THREE INTEGRATED CAPITAL INTELLIGENCE CARDS (Removed master outer wrapper and header, placed inline in main grid) */}
+      {/* THREE INTEGRATED CAPITAL INTELLIGENCE CARDS (Deep Blue/Indigo bg-[#122238] border-[#1e3458]) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Card 1: Capital Efficiency */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col justify-between text-white min-w-0 shadow-lg">
+        <div className="bg-[#122238] border border-[#1e3458] rounded-xl p-6 flex flex-col justify-between text-white min-w-0 shadow-lg">
           <div>
             <div className="flex items-center justify-between mb-3 gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-blue-300 block truncate">Capital Efficiency</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-bright-mint block truncate">Capital Efficiency</span>
               <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border shrink-0 truncate ${advancedAnalytics.savingsColor}`}>
                 {advancedAnalytics.savingsGrade}
               </span>
@@ -498,7 +498,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
           <div className="mt-6 w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-1000 ${
-                advancedAnalytics.savingsRate >= 30 ? 'bg-emerald-500' : 'bg-amber-400'
+                advancedAnalytics.savingsRate >= 30 ? 'bg-bright-mint' : 'bg-soft-coral'
               }`}
               style={{ width: `${Math.max(0, Math.min(100, advancedAnalytics.savingsRate))}%` }}
             />
@@ -506,25 +506,25 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         </div>
 
         {/* Card 2: Runway / Growth Trend */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col justify-between text-white min-w-0 shadow-lg">
+        <div className="bg-[#122238] border border-[#1e3458] rounded-xl p-6 flex flex-col justify-between text-white min-w-0 shadow-lg">
           {metrics.netFlow >= 0 ? (
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-blue-300 block mb-3 truncate">Wealth Forecast</span>
-              <h4 className="text-2xl font-black text-emerald-400 mb-1 truncate">{formatValue(advancedAnalytics.compoundFutureWealth)}</h4>
+              <span className="text-xs font-bold uppercase tracking-wider text-bright-mint block mb-3 truncate">Wealth Forecast</span>
+              <h4 className="text-2xl font-black text-bright-mint mb-1 truncate">{formatValue(advancedAnalytics.compoundFutureWealth)}</h4>
               <p className="text-xs text-slate-300 leading-relaxed">
                 Projected compounding value of current net earnings in **5 years** at a conservative **7% annual yield** without extra deposits.
               </p>
-              <div className="mt-4 flex items-center gap-1.5 text-[10px] text-[#ffb81c] font-semibold bg-[#ffb81c]/10 border border-[#ffb81c]/20 px-2.5 py-1 rounded">
+              <div className="mt-4 flex items-center gap-1.5 text-[10px] text-bright-mint font-semibold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded">
                 <Sparkles className="w-3 h-3 shrink-0" />
                 <span className="truncate">Sustained growth compounds capital.</span>
               </div>
             </div>
           ) : (
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-red-300 flex items-center gap-1.5 mb-3">
-                <AlertTriangle className="w-3.5 h-3.5 text-[#ffb81c] shrink-0" /> Cash Runway Alert
+              <span className="text-xs font-bold uppercase tracking-wider text-soft-coral flex items-center gap-1.5 mb-3">
+                <AlertTriangle className="w-3.5 h-3.5 text-soft-coral shrink-0" /> Cash Runway Alert
               </span>
-              <h4 className="text-2xl font-black text-red-400 mb-1 truncate">
+              <h4 className="text-2xl font-black text-soft-coral mb-1 truncate">
                 {advancedAnalytics.currentRunwayMonths !== null
                   ? `${advancedAnalytics.currentRunwayMonths.toFixed(1)} Months`
                   : 'Deficit Risk'}
@@ -535,16 +535,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
             </div>
           )}
 
-          <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-blue-200 font-bold">
+          <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-slate-300 font-bold">
             <span className="truncate">MoM Trend:</span>
             <span className="flex items-center gap-1 truncate font-black">
               {advancedAnalytics.momTrend === 'up' && (
-                <span className="text-emerald-400 flex items-center gap-0.5">
+                <span className="text-bright-mint flex items-center gap-0.5">
                   <TrendingUp className="w-3.5 h-3.5 shrink-0" /> +{advancedAnalytics.momGrowth.toFixed(1)}%
                 </span>
               )}
               {advancedAnalytics.momTrend === 'down' && (
-                <span className="text-red-400 flex items-center gap-0.5">
+                <span className="text-soft-coral flex items-center gap-0.5">
                   <TrendingDown className="w-3.5 h-3.5 shrink-0" /> {advancedAnalytics.momGrowth.toFixed(1)}%
                 </span>
               )}
@@ -554,9 +554,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         </div>
 
         {/* Card 3: Subscription Predictor */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col justify-between text-white min-w-0 shadow-lg">
+        <div className="bg-[#122238] border border-[#1e3458] rounded-xl p-6 flex flex-col justify-between text-white min-w-0 shadow-lg">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-blue-300 block mb-3 truncate">Recurring Charges</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-bright-mint block mb-3 truncate">Recurring Charges</span>
             {advancedAnalytics.recurringList.length === 0 ? (
               <p className="text-xs text-slate-400 py-6 text-center">No regular monthly outlays detected.</p>
             ) : (
@@ -567,7 +567,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
                       <div className="font-bold text-slate-100 truncate">{rec.name}</div>
                       <div className="text-[10px] text-slate-400">{rec.count} intervals</div>
                     </div>
-                    <span className="font-bold text-red-300 bg-red-950/40 border border-red-900/30 px-1.5 py-0.5 rounded text-[10px] shrink-0">
+                    <span className="font-bold text-soft-coral bg-red-950/40 border border-red-900/30 px-1.5 py-0.5 rounded text-[10px] shrink-0">
                       ~{formatValue(rec.avgAmount)}/mo
                     </span>
                   </div>
@@ -582,9 +582,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 min-w-0 overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-4 mb-5">
           <div className="flex items-center gap-2 min-w-0">
-            <CalendarDays className="w-5 h-5 text-[#004b87] shrink-0" />
+            <CalendarDays className="w-5 h-5 text-dark-green shrink-0" />
             <div className="min-w-0">
-              <h3 className="text-base font-bold text-[#0a2540] truncate">Spending Rhythm Heatmap</h3>
+              <h3 className="text-base font-bold text-dark-green truncate">Spending Rhythm Heatmap</h3>
               <p className="text-xs text-gray-500 truncate">Visualization of transaction frequency across daily grid</p>
             </div>
           </div>
@@ -597,7 +597,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
                 onClick={() => setSelectedYearHeatmap(y)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer select-none ${
                   selectedYearHeatmap === y
-                    ? 'bg-[#117aca] text-white'
+                    ? 'bg-dark-green text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
@@ -638,11 +638,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
 
               <div className="flex items-center justify-end gap-1.5 mt-3 text-[10px] text-gray-400 font-semibold select-none">
                 <span>Less</span>
-                <div className="w-3 h-3 rounded-sm bg-gray-100" />
-                <div className="w-3 h-3 rounded-sm bg-blue-100" />
-                <div className="w-3 h-3 rounded-sm bg-blue-300" />
-                <div className="w-3 h-3 rounded-sm bg-blue-500" />
-                <div className="w-3 h-3 rounded-sm bg-[#004b87]" />
+                <div className="w-3 h-3 rounded-sm bg-white border border-gray-200" />
+                <div className="w-3 h-3 rounded-sm bg-[#d1fae5]" />
+                <div className="w-3 h-3 rounded-sm bg-[#6ee7b7]" />
+                <div className="w-3 h-3 rounded-sm bg-[#10b981]" />
+                <div className="w-3 h-3 rounded-sm bg-[#0F4A27]" />
                 <span>More</span>
               </div>
             </div>
@@ -655,7 +655,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         {/* Balance Area Chart */}
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 min-w-0">
           <div className="border-b border-gray-100 pb-4 mb-5">
-            <h3 className="text-base font-bold text-[#0a2540]">Running Balance Progress</h3>
+            <h3 className="text-base font-bold text-dark-green">Running Balance Progress</h3>
             <p className="text-xs text-gray-500">Cumulative capital movement trend over time</p>
           </div>
           <div className="h-72 w-full">
@@ -663,8 +663,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
               <AreaChart data={areaChartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="balanceGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#117aca" stopOpacity={0.2}/>
-                    <stop offset="95%" stopColor="#117aca" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
@@ -677,9 +677,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
                 />
                 <Tooltip
                   formatter={(value: any) => [formatValue(Number(value)), 'Cumulative Balance']}
-                  contentStyle={{ backgroundColor: '#0a2540', borderRadius: '8px', color: '#fff' }}
+                  contentStyle={{ backgroundColor: '#122238', borderRadius: '8px', color: '#fff' }}
                 />
-                <Area type="monotone" dataKey="balance" stroke="#117aca" strokeWidth={2} fillOpacity={1} fill="url(#balanceGrad)" />
+                <Area type="monotone" dataKey="balance" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#balanceGrad)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -689,7 +689,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 min-w-0">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-4 mb-5">
             <div className="min-w-0">
-              <h3 className="text-base font-bold text-[#0a2540] truncate">Monthly Cash Movement</h3>
+              <h3 className="text-base font-bold text-dark-green truncate">Monthly Cash Movement</h3>
               <p className="text-xs text-gray-500 truncate">Direct comparison of inbound vs outbound</p>
             </div>
 
@@ -698,7 +698,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
               <button
                 onClick={() => setSelectedYearCharts('All')}
                 className={`px-2.5 py-1 rounded text-xs font-bold transition cursor-pointer select-none ${
-                  selectedYearCharts === 'All' ? 'bg-[#004b87] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  selectedYearCharts === 'All' ? 'bg-dark-green text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 All Years
@@ -708,7 +708,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
                   key={y}
                   onClick={() => setSelectedYearCharts(y)}
                   className={`px-2.5 py-1 rounded text-xs font-bold transition cursor-pointer select-none ${
-                    selectedYearCharts === y ? 'bg-[#004b87] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    selectedYearCharts === y ? 'bg-dark-green text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
                   {y}
@@ -729,11 +729,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
                 />
                 <Tooltip
                   formatter={(value: any) => [formatValue(Number(value)), '']}
-                  contentStyle={{ backgroundColor: '#0a2540', borderRadius: '8px', color: '#fff' }}
+                  contentStyle={{ backgroundColor: '#122238', borderRadius: '8px', color: '#fff' }}
                 />
                 <Legend iconSize={10} iconType="circle" />
                 <Bar dataKey="Inflow" fill="#10b981" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Outflow" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Outflow" fill="#e06a55" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -745,7 +745,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         {/* Outflow / Expense Category list */}
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 min-w-0">
           <div className="border-b border-gray-100 pb-4 mb-4">
-            <h3 className="text-base font-bold text-[#0a2540]">Where the money went</h3>
+            <h3 className="text-base font-bold text-dark-green">Where the money went</h3>
             <p className="text-xs text-gray-500">Outflow distribution categorized by volume</p>
           </div>
           <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
@@ -756,12 +756,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
                 <div key={idx} className="space-y-1.5 min-w-0">
                   <div className="flex justify-between text-xs font-semibold text-gray-700 gap-2">
                     <span className="flex items-center gap-2 truncate min-w-0">
-                      <span className="w-2 h-2 rounded-full bg-red-500 shrink-0" /> <span className="truncate">{exp.category}</span>
+                      <span className="w-2 h-2 rounded-full bg-soft-coral shrink-0" /> <span className="truncate">{exp.category}</span>
                     </span>
                     <span className="font-bold shrink-0">{formatValue(exp.amount)} ({exp.percent.toFixed(1)}%)</span>
                   </div>
                   <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                    <div className="bg-red-500 h-full rounded-full" style={{ width: `${exp.percent}%` }} />
+                    <div className="bg-soft-coral h-full rounded-full" style={{ width: `${exp.percent}%` }} />
                   </div>
                 </div>
               ))
@@ -772,7 +772,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         {/* Inflow / Income Category list */}
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 min-w-0">
           <div className="border-b border-gray-100 pb-4 mb-4">
-            <h3 className="text-base font-bold text-[#0a2540]">Where the money came from</h3>
+            <h3 className="text-base font-bold text-dark-green">Where the money came from</h3>
             <p className="text-xs text-gray-500">Inflow distribution categorized by volume</p>
           </div>
           <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
@@ -783,12 +783,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
                 <div key={idx} className="space-y-1.5 min-w-0">
                   <div className="flex justify-between text-xs font-semibold text-gray-700 gap-2">
                     <span className="flex items-center gap-2 truncate min-w-0">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" /> <span className="truncate">{inc.category}</span>
+                      <span className="w-2 h-2 rounded-full bg-bright-mint shrink-0" /> <span className="truncate">{inc.category}</span>
                     </span>
                     <span className="font-bold shrink-0">{formatValue(inc.amount)} ({inc.percent.toFixed(1)}%)</span>
                   </div>
                   <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                    <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${inc.percent}%` }} />
+                    <div className="bg-bright-mint h-full rounded-full" style={{ width: `${inc.percent}%` }} />
                   </div>
                 </div>
               ))
@@ -802,7 +802,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         {/* Top Payees (Debits) */}
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 min-w-0">
           <div className="border-b border-gray-100 pb-4 mb-4">
-            <h3 className="text-base font-bold text-[#0a2540]">Top Payees</h3>
+            <h3 className="text-base font-bold text-dark-green">Top Payees</h3>
             <p className="text-xs text-gray-500">Largest cumulative outgoing cash destinations</p>
           </div>
           <div className="divide-y divide-gray-100">
@@ -812,7 +812,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
               topPayees.map((payee, idx) => (
                 <div key={idx} className="py-3 flex items-center justify-between text-xs gap-3 min-w-0">
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="w-6 h-6 rounded bg-[#004b87]/5 text-[#004b87] flex items-center justify-center font-bold text-[10px] shrink-0">
+                    <span className="w-6 h-6 rounded bg-[#122238]/5 text-dark-green flex items-center justify-center font-bold text-[10px] shrink-0">
                       {String(idx + 1).padStart(2, '0')}
                     </span>
                     <div className="min-w-0 truncate">
@@ -820,7 +820,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
                       <div className="text-gray-400 mt-0.5">{payee.count} transactions</div>
                     </div>
                   </div>
-                  <div className="font-bold text-red-600 shrink-0">{formatValue(payee.amount)}</div>
+                  <div className="font-bold text-soft-coral shrink-0">{formatValue(payee.amount)}</div>
                 </div>
               ))
             )}
@@ -830,7 +830,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
         {/* Top Payers (Credits) */}
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 min-w-0">
           <div className="border-b border-gray-100 pb-4 mb-4">
-            <h3 className="text-base font-bold text-[#0a2540]">Top Payers</h3>
+            <h3 className="text-base font-bold text-dark-green">Top Payers</h3>
             <p className="text-xs text-gray-500">Largest cumulative incoming cash sources</p>
           </div>
           <div className="divide-y divide-gray-100">
@@ -840,7 +840,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
               topPayers.map((payer, idx) => (
                 <div key={idx} className="py-3 flex items-center justify-between text-xs gap-3 min-w-0">
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="w-6 h-6 rounded bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-[10px] shrink-0">
+                    <span className="w-6 h-6 rounded bg-emerald-50 text-bright-mint flex items-center justify-center font-bold text-[10px] shrink-0">
                       {String(idx + 1).padStart(2, '0')}
                     </span>
                     <div className="min-w-0 truncate">
@@ -848,7 +848,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
                       <div className="text-gray-400 mt-0.5">{payer.count} transactions</div>
                     </div>
                   </div>
-                  <div className="font-bold text-emerald-600 shrink-0">{formatValue(payer.amount)}</div>
+                  <div className="font-bold text-bright-mint shrink-0">{formatValue(payer.amount)}</div>
                 </div>
               ))
             )}
@@ -860,11 +860,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ report, onReset }) => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 text-center min-w-0">
           <div className="text-xs font-bold text-gray-400 uppercase tracking-widest truncate">Largest Credit</div>
-          <div className="text-lg font-black text-emerald-600 mt-1.5 truncate">{formatValue(largestCredit)}</div>
+          <div className="text-lg font-black text-bright-mint mt-1.5 truncate">{formatValue(largestCredit)}</div>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 text-center min-w-0">
           <div className="text-xs font-bold text-gray-400 uppercase tracking-widest truncate">Largest Debit</div>
-          <div className="text-lg font-black text-red-600 mt-1.5 truncate">{formatValue(largestDebit)}</div>
+          <div className="text-lg font-black text-soft-coral mt-1.5 truncate">{formatValue(largestDebit)}</div>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 text-center min-w-0">
           <div className="text-xs font-bold text-gray-400 uppercase tracking-widest truncate">Avg Monthly Debit</div>
