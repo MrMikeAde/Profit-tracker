@@ -1,10 +1,10 @@
 # WhatIEarn: Premium Privacy-First Profit Tracker
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-whatiearn.netlify.app-004b87?style=for-the-badge&logo=netlify)](https://whatiearn.netlify.app)
-[![Built With](https://img.shields.io/badge/Tech%20Stack-React%20%7C%20Vite%20%7C%20TypeScript%20%7C%20Tailwind-blue?style=for-the-badge)](https://whatiearn.netlify.app)
-[![Privacy Certified](https://img.shields.io/badge/Privacy-100%25%20Client--side-emerald?style=for-the-badge&logo=shield)](https://whatiearn.netlify.app)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-whatiearn.netlify.app-0F4A27?style=for-the-badge&logo=netlify)](https://whatiearn.netlify.app)
+[![Built With](https://img.shields.io/badge/Tech%20Stack-React%20%7C%20Vite%20%7C%20TypeScript%20%7C%20Tailwind-10b981?style=for-the-badge)](https://whatiearn.netlify.app)
+[![Privacy Certified](https://img.shields.io/badge/Privacy-100%25%20Client--side-10b981?style=for-the-badge&logo=shield)](https://whatiearn.netlify.app)
 
-**WhatIEarn** is an enterprise-grade, high-fidelity financial analytics dashboard and statement parser that works entirely in the client's browser. It converts raw, unstructured CSV or Excel bank statements into highly visual, responsive, and printable profit-and-loss insights.
+**WhatIEarn** is an enterprise-grade, high-fidelity financial analytics dashboard and statement parser that works entirely in the client's browser. It converts raw, unstructured CSV, Excel, or PDF bank statements into highly visual, responsive, and printable profit-and-loss insights.
 
 Designed to match the ultra-premium 2026 web design standards, WhatIEarn is clean, private, and lightning-fast. It requires **no user registration**, **no backend database**, and **no server-side uploads**—ensuring absolute bank-grade secrecy for sensitive financial statements.
 
@@ -72,37 +72,18 @@ Standard financial parsers break when statement column headers differ. WhatIEarn
 
 ## 💎 2026 UI Design & Aesthetic Standards
 
-WhatIEarn incorporates premium UI paradigms matching modern design requirements:
+WhatIEarn incorporates premium UI paradigms matching modern design requirements with our updated natural financial theme:
 
 * **Fit-to-Screen Canvas**: Fluid layouts and responsive dashboard cells scale effortlessly from mobile phone touchscreens up to ultra-wide 4K workstations.
-* **Premium Financial Theme**: Designed around corporate Prussian Blue (`#0a2540`), Deep Indigo accents (`#117aca`), gold highlights (`#ffb81c`), and dynamic transaction indicators (emerald for incoming, crimson for outgoing).
-* **The Spending Rhythm Heatmap**: A customized GitHub-style visual heatmap showing daily financial transaction frequency throughout selected years.
+* **Premium Financial Theme**:
+  * **Dark Green (`#0F4A27`)**: Highlights financial security, safety, and wealth growth. Used for CTA buttons, primary numbers, and main header headers.
+  * **Crisp White & Light Gray (`#ffffff` / `#f4f6f5`)**: Keeps the background exceptionally clean and lets reports pop.
+  * **Soft Gray / Off-Black (`#222523`)**: Offers professional, readable text typography that reduces eye strain.
+  * **Bright Mint Green (`#10b981`)**: Highlights positive growth, capital goals, and running balance trend progression.
+  * **Soft Coral (`#e06a55`)**: Signals cash outlays and bills without creating visual alarm.
+  * **Deep Indigo (`#122238`)**: Establishes maximum trust as container card backgrounds and chart tooltip styling.
+* **The Spending Rhythm Heatmap**: A customized GitHub-style visual heatmap showing daily financial transaction frequency throughout selected years using standard green grid shades.
 * **Pixel-Perfect Print Style Sheet**: Features dedicated CSS rules enabling professional, clean PDF formatting when printing physical report documents.
-
----
-
-## 🚀 Deployment Guide (Netlify)
-
-This single-page application is structured for instant high-performance deployment on Netlify.
-
-### Method 1: Continuous Deployment via Git (Recommended)
-1. **Push Code**: Push this codebase to your personal repository (GitHub/GitLab).
-2. **Import Site**: Link your repository to **Netlify**.
-3. **Configure Build Settings**:
-   - **Build Command**: `npm run build`
-   - **Publish Directory**: `dist`
-4. **Launch**: Click **Deploy Site**. Every subsequent push to your main branch will trigger a production deployment.
-
-### Method 2: Instant Manual Deployment
-1. **Compile the Bundle**:
-   ```bash
-   npm run build
-   ```
-2. **Drag & Drop**: Head to [Netlify Drop](https://app.netlify.com/drop) and drag the output `/dist` folder into the browser window to publish instantly.
-
-### Technical Optimizations Enabled:
-* **SPA Routing & Redirects**: Netlify SPA reload configurations are resolved via a `_redirects` file mapped directly to `public/` to prevent manual refresh routing bugs (returning 404s).
-* **Rollup Asset Chunking**: Configured in `vite.config.ts` to optimize loading times for heavy libraries (`recharts` and `xlsx`) by generating split parallel chunks.
 
 ---
 
